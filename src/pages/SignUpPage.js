@@ -1,10 +1,11 @@
 import { useState } from "react";
+import axios from "axios";
 
 function SignUpPage() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordRepeate, setPasswordRepeat] = useState("");
+  const [passwordRepeat, setPasswordRepeat] = useState("");
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -27,14 +28,27 @@ function SignUpPage() {
     }
   };
 
+  const handleSignUp = (event) => {
+    event.preventDefault();
+
+    const body = {
+      username,
+      email,
+      password,
+      passwordRepeat,
+    };
+
+    axios.post("api/1.0/users", body);
+  };
+
   let isSignUpBtnDisabled = true;
 
-  if (password && passwordRepeate) {
-    isSignUpBtnDisabled = password !== passwordRepeate;
+  if (password && passwordRepeat) {
+    isSignUpBtnDisabled = password !== passwordRepeat;
   }
 
   return (
-    <div>
+    <form>
       <h1>Sign Up</h1>
       <label htmlFor="username">Username</label>
       <input
@@ -65,10 +79,12 @@ function SignUpPage() {
         id="password-repeat"
         type="password"
         onChange={handleChange}
-        value={passwordRepeate}
+        value={passwordRepeat}
       />
-      <button disabled={isSignUpBtnDisabled}>Sign Up</button>
-    </div>
+      <button disabled={isSignUpBtnDisabled} onClick={handleSignUp}>
+        Sign Up
+      </button>
+    </form>
   );
 }
 
