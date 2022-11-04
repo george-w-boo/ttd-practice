@@ -28,17 +28,16 @@ function SignUpPage() {
     }
   };
 
-  const handleSignUp = (event) => {
+  const handleSignUp = async (event) => {
     event.preventDefault();
 
     const body = {
       username,
       email,
       password,
-      passwordRepeat,
     };
 
-    axios.post("api/1.0/users", body);
+    await axios.post("/api/1.0/users", body);
   };
 
   let isSignUpBtnDisabled = true;

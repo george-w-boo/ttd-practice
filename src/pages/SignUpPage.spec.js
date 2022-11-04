@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import axios from "axios";
+import { setupServer } from "msw/node";
+import { rest } from "msw";
 
 import SignUpPage from "./SignUpPage";
 
@@ -102,8 +104,50 @@ describe("SignUpPage", () => {
         username: "test-user",
         email: "test@test.com",
         password: "secret",
-        passwordRepeat: "secret",
       });
+    });
+
+    it("checks if sign-up submit fn has proper body (Mock Server Worker solution)", async () => {
+      let requestBody;
+
+      const server = setupServer(
+        rest.post("/api/1.0/users", (req, res, ctx) => {
+          requestBody = req.json();
+
+          console.log("requstBody", requestBody);
+
+          return res(ctx.status(200));
+        })
+      );
+
+      server.listen();
+
+      render(<SignUpPage />);
+
+      const usernameInputEl = screen.getByLabelText(/username/i);
+      const emailInputEl = screen.getByLabelText(/email/i);
+      const passwordInputEl = screen.getByLabelText("Password", {
+        exact: true,
+      });
+      const passwordRepeatInputEl = screen.getByLabelText(/Password Repeat/i);
+      const signUpBtnEl = screen.getByRole("button", { name: /sign up/i });
+
+      userEvent.type(usernameInputEl, "test-user");
+      userEvent.type(emailInputEl, "test@test.com");
+      userEvent.type(passwordInputEl, "secret");
+      userEvent.type(passwordRepeatInputEl, "secret");
+
+      userEvent.click(signUpBtnEl);
+
+      await new Promise((resolve) => setTimeout(resolve), 5000);
+
+      expect(requestBody).toEqual({
+        username: "test-user",
+        email: "test@test.com",
+        password: "secret",
+      });
+
+      server.close();
     });
   });
 });
