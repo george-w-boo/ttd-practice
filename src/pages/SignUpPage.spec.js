@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import axios from "axios";
+// import axios from "axios";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
 
@@ -75,44 +75,45 @@ describe("SignUpPage", () => {
       expect(signUpBtnEl).toBeEnabled();
     });
 
-    it("checks if sign-up submit fn has proper body", () => {
-      render(<SignUpPage />);
+    // manual approach
+    // it("checks if sign-up submit fn has proper body", () => {
+    //   render(<SignUpPage />);
 
-      const usernameInputEl = screen.getByLabelText(/username/i);
-      const emailInputEl = screen.getByLabelText(/email/i);
-      const passwordInputEl = screen.getByLabelText("Password", {
-        exact: true,
-      });
-      const passwordRepeatInputEl = screen.getByLabelText(/Password Repeat/i);
-      const signUpBtnEl = screen.getByRole("button", { name: /sign up/i });
+    //   const usernameInputEl = screen.getByLabelText(/username/i);
+    //   const emailInputEl = screen.getByLabelText(/email/i);
+    //   const passwordInputEl = screen.getByLabelText("Password", {
+    //     exact: true,
+    //   });
+    //   const passwordRepeatInputEl = screen.getByLabelText(/Password Repeat/i);
+    //   const signUpBtnEl = screen.getByRole("button", { name: /sign up/i });
 
-      userEvent.type(usernameInputEl, "test-user");
-      userEvent.type(emailInputEl, "test@test.com");
-      userEvent.type(passwordInputEl, "secret");
-      userEvent.type(passwordRepeatInputEl, "secret");
+    //   userEvent.type(usernameInputEl, "test-user");
+    //   userEvent.type(emailInputEl, "test@test.com");
+    //   userEvent.type(passwordInputEl, "secret");
+    //   userEvent.type(passwordRepeatInputEl, "secret");
 
-      const mockFn = jest.fn();
+    //   const mockFn = jest.fn();
 
-      axios.post = mockFn;
+    //   axios.post = mockFn;
 
-      userEvent.click(signUpBtnEl);
+    //   userEvent.click(signUpBtnEl);
 
-      const signUpFirstCall = mockFn.mock.calls[0];
-      const signUpSecondArgument = signUpFirstCall[1];
+    //   const signUpFirstCall = mockFn.mock.calls[0];
+    //   const signUpSecondArgument = signUpFirstCall[1];
 
-      expect(signUpSecondArgument).toEqual({
-        username: "test-user",
-        email: "test@test.com",
-        password: "secret",
-      });
-    });
+    //   expect(signUpSecondArgument).toEqual({
+    //     username: "test-user",
+    //     email: "test@test.com",
+    //     password: "secret",
+    //   });
+    // });
 
     it("checks if sign-up submit fn has proper body (Mock Server Worker solution)", async () => {
       let requestBody;
 
       const server = setupServer(
-        rest.post("/api/1.0/users", (req, res, ctx) => {
-          requestBody = req.json();
+        rest.post("/api/1.0/users", async (req, res, ctx) => {
+          requestBody = await req.json();
 
           console.log("requstBody", requestBody);
 
@@ -139,7 +140,7 @@ describe("SignUpPage", () => {
 
       userEvent.click(signUpBtnEl);
 
-      await new Promise((resolve) => setTimeout(resolve), 5000);
+      await new Promise((resolve) => setTimeout(resolve), 500);
 
       expect(requestBody).toEqual({
         username: "test-user",
