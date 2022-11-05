@@ -47,43 +47,67 @@ function SignUpPage() {
   }
 
   return (
-    <form>
-      <h1>Sign Up</h1>
-      <label htmlFor="username">Username</label>
-      <input
-        name="username"
-        id="username"
-        onChange={handleChange}
-        value={username}
-      />
-      <label htmlFor="email">Email</label>
-      <input
-        name="email"
-        id="email"
-        type="email"
-        onChange={handleChange}
-        value={email}
-      />
-      <label htmlFor="password">Password</label>
-      <input
-        name="password"
-        id="password"
-        type="password"
-        onChange={handleChange}
-        value={password}
-      />
-      <label htmlFor="password-repeat">Password Repeat</label>
-      <input
-        name="password-repeat"
-        id="password-repeat"
-        type="password"
-        onChange={handleChange}
-        value={passwordRepeat}
-      />
-      <button disabled={isSignUpBtnDisabled} onClick={handleSignUp}>
-        Sign Up
-      </button>
-    </form>
+    <div className="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
+      <form className="card mt-5">
+        <div className="card-header">
+          <h1 className="text-center">Sign Up</h1>
+        </div>
+        <div className="card-body">
+          <div className="mb-3">
+            <label className="form-label" htmlFor="username">Username</label>
+            <input
+              className="form-control"
+              name="username"
+              id="username"
+              onChange={handleChange}
+              value={username}
+              aria-describedby="usernameHelp"
+            />
+            <div id="usernameHelp" class="form-text">We'll never share your email with anyone else.</div>
+          </div>
+          <div className="mb-3">
+            <label class="form-label" htmlFor="email">Email</label>
+            <input
+              className="form-control"
+              name="email"
+              id="email"
+              type="email"
+              onChange={handleChange}
+              value={email}
+              aria-describedby="emailHelp"
+            />
+            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+          </div>
+          <div className="mb-3">
+            <label class="form-label" htmlFor="password">Password</label>
+            <input
+              className="form-control"
+              name="password"
+              id="password"
+              type="password"
+              onChange={handleChange}
+              value={password}
+            />
+          </div>
+          <div className="mb-3">
+            <label class="form-label" htmlFor="password-repeat">Password Repeat</label>
+            <input
+              className="form-control"
+              name="password-repeat"
+              id="password-repeat"
+              type="password"
+              onChange={handleChange}
+              value={passwordRepeat}
+            />
+          </div>
+          <div className="text-center">
+            <button className="btn btn-primary" disabled={isSignUpBtnDisabled} onClick={handleSignUp}>
+              Sign Up
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
   );
 }
 
