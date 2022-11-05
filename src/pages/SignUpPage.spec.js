@@ -60,22 +60,32 @@ describe("SignUpPage", () => {
   });
 
   describe("Interactions", () => {
-    it("enables sign-up btn if password and password repeat are the same", () => {
+    let signUpBtnEl;
+
+    const setup = () => {
       render(<SignUpPage />);
 
+      const usernameInputEl = screen.getByLabelText(/username/i);
+      const emailInputEl = screen.getByLabelText(/email/i);
       const passwordInputEl = screen.getByLabelText("Password", {
         exact: true,
       });
       const passwordRepeatInputEl = screen.getByLabelText(/Password Repeat/i);
-      const signUpBtnEl = screen.getByRole("button", { name: /sign up/i });
+      signUpBtnEl = screen.getByRole("button", { name: /sign up/i });
 
+      userEvent.type(usernameInputEl, "test-user");
+      userEvent.type(emailInputEl, "test@test.com");
       userEvent.type(passwordInputEl, "secret");
       userEvent.type(passwordRepeatInputEl, "secret");
+    }
+
+    it("enables sign-up btn if password and password repeat are the same", () => {
+      setup();
 
       expect(signUpBtnEl).toBeEnabled();
     });
 
-    // manual approach
+    // manual approach to check if sign-up submit fn has proper body
     // it("checks if sign-up submit fn has proper body", () => {
     //   render(<SignUpPage />);
 
@@ -123,20 +133,7 @@ describe("SignUpPage", () => {
 
       server.listen();
 
-      render(<SignUpPage />);
-
-      const usernameInputEl = screen.getByLabelText(/username/i);
-      const emailInputEl = screen.getByLabelText(/email/i);
-      const passwordInputEl = screen.getByLabelText("Password", {
-        exact: true,
-      });
-      const passwordRepeatInputEl = screen.getByLabelText(/Password Repeat/i);
-      const signUpBtnEl = screen.getByRole("button", { name: /sign up/i });
-
-      userEvent.type(usernameInputEl, "test-user");
-      userEvent.type(emailInputEl, "test@test.com");
-      userEvent.type(passwordInputEl, "secret");
-      userEvent.type(passwordRepeatInputEl, "secret");
+      setup();
 
       userEvent.click(signUpBtnEl);
 
@@ -147,6 +144,55 @@ describe("SignUpPage", () => {
         email: "test@test.com",
         password: "secret",
       });
+
+      server.close();
+    });
+
+    it("checks if sign-up btn is disabled while ongoing api call", async () => {
+      let counter = 0;
+
+      const server = setupServer(
+        rest.post("/api/1.0/users", async (req, res, ctx) => {
+          counter++;
+
+          return res(ctx.status(200));
+        })
+      );
+
+      server.listen();
+      
+      setup();
+
+      userEvent.click(signUpBtnEl);
+      userEvent.click(signUpBtnEl);
+
+      await new Promise((resolve) => setTimeout(resolve), 500);
+
+      expect(counter).toEqual(1);
+
+      server.close();
+    });
+
+    it("checks if spinner is visible after clicking sign up", async () => {
+      const server = setupServer(
+        rest.post("/api/1.0/users", async (req, res, ctx) => {
+
+          return res(ctx.status(200));
+        })
+      );
+
+      server.listen();
+      
+      setup();
+      
+      let spinnerEl = screen.queryByRole('status', { hidden: true });
+
+      expect(spinnerEl).not.toBeInTheDocument();
+      userEvent.click(signUpBtnEl);
+      
+      spinnerEl = screen.queryByRole('status', { hidden: true });
+
+      expect(spinnerEl).toBeInTheDocument();
 
       server.close();
     });

@@ -6,6 +6,7 @@ function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordRepeat, setPasswordRepeat] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -37,6 +38,7 @@ function SignUpPage() {
       password,
     };
 
+    setIsLoading(true);
     await axios.post("/api/1.0/users", body);
   };
 
@@ -63,10 +65,10 @@ function SignUpPage() {
               value={username}
               aria-describedby="usernameHelp"
             />
-            <div id="usernameHelp" class="form-text">We'll never share your email with anyone else.</div>
+            <div id="usernameHelp" className="form-text">We'll never share your email with anyone else.</div>
           </div>
           <div className="mb-3">
-            <label class="form-label" htmlFor="email">Email</label>
+            <label className="form-label" htmlFor="email">Email</label>
             <input
               className="form-control"
               name="email"
@@ -76,10 +78,10 @@ function SignUpPage() {
               value={email}
               aria-describedby="emailHelp"
             />
-            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+            <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
           </div>
           <div className="mb-3">
-            <label class="form-label" htmlFor="password">Password</label>
+            <label className="form-label" htmlFor="password">Password</label>
             <input
               className="form-control"
               name="password"
@@ -90,7 +92,7 @@ function SignUpPage() {
             />
           </div>
           <div className="mb-3">
-            <label class="form-label" htmlFor="password-repeat">Password Repeat</label>
+            <label className="form-label" htmlFor="password-repeat">Password Repeat</label>
             <input
               className="form-control"
               name="password-repeat"
@@ -101,7 +103,8 @@ function SignUpPage() {
             />
           </div>
           <div className="text-center">
-            <button className="btn btn-primary" disabled={isSignUpBtnDisabled} onClick={handleSignUp}>
+            <button className="btn btn-primary" disabled={isSignUpBtnDisabled || isLoading} onClick={handleSignUp}>
+              {isLoading && <span className="spinner-border spinner-border-sm" role="status" aria-hidden={true}></span>}
               Sign Up
             </button>
           </div>
