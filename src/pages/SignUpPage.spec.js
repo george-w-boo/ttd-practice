@@ -63,6 +63,24 @@ describe("SignUpPage", () => {
     let signUpBtnEl;
     const message = 'Please, check you email!';
 
+    let requestBody;
+    let counter = 0;
+
+    const server = setupServer(
+      rest.post("/api/1.0/users", async (req, res, ctx) => {
+        requestBody = await req.json();
+
+        counter += 1;
+
+        return res(ctx.status(200));
+      })
+    );
+    
+    beforeAll(() => server.listen());
+    beforeEach(() => counter = 0);
+
+    afterAll(() => server.close());
+
     const setup = () => {
       render(<SignUpPage />);
 
@@ -120,20 +138,6 @@ describe("SignUpPage", () => {
     // });
 
     it("checks if sign-up submit fn has proper body (Mock Server Worker solution)", async () => {
-      let requestBody;
-
-      const server = setupServer(
-        rest.post("/api/1.0/users", async (req, res, ctx) => {
-          requestBody = await req.json();
-
-          console.log("requstBody", requestBody);
-
-          return res(ctx.status(200));
-        })
-      );
-
-      server.listen();
-
       setup();
 
       userEvent.click(signUpBtnEl);
@@ -145,23 +149,9 @@ describe("SignUpPage", () => {
         email: "test@test.com",
         password: "secret",
       });
-
-      server.close();
     });
 
     it("checks if sign-up btn is disabled while ongoing api call", async () => {
-      let counter = 0;
-
-      const server = setupServer(
-        rest.post("/api/1.0/users", async (req, res, ctx) => {
-          counter++;
-
-          return res(ctx.status(200));
-        })
-      );
-
-      server.listen();
-      
       setup();
 
       userEvent.click(signUpBtnEl);
@@ -170,20 +160,9 @@ describe("SignUpPage", () => {
       await screen.findByText(message)
 
       expect(counter).toEqual(1);
-
-      server.close();
     });
 
     it("renders spinner after clicking sign up", async () => {
-      const server = setupServer(
-        rest.post("/api/1.0/users", async (req, res, ctx) => {
-
-          return res(ctx.status(200));
-        })
-      );
-
-      server.listen();
-      
       setup();
       
       let spinnerEl = screen.queryByRole('status', { hidden: true });
@@ -196,20 +175,9 @@ describe("SignUpPage", () => {
       expect(spinnerEl).toBeInTheDocument();
 
       await screen.findByText(message);
-
-      server.close();
     });
 
     it('renders check email alert after successful api call', async () => {
-      const server = setupServer(
-        rest.post("/api/1.0/users", async (req, res, ctx) => {
-
-          return res(ctx.status(200));
-        })
-      );
-
-      server.listen();
-      
       setup();
 
       let emailAlertEl = screen.queryByText(message);
@@ -224,15 +192,6 @@ describe("SignUpPage", () => {
     });
 
     it('hides sign-up form upon successful api call', async () => {
-      const server = setupServer(
-        rest.post("/api/1.0/users", async (req, res, ctx) => {
-
-          return res(ctx.status(200));
-        })
-      );
-
-      server.listen();
-
       setup();
 
       const formEl = screen.getByTestId('sign-up-form');

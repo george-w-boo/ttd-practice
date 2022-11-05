@@ -39,11 +39,13 @@ function SignUpPage() {
       password,
     };
 
-    setIsLoading(true);
-    await axios.post("/api/1.0/users", body);
-    setIsLoading(false);
-
-    setSignUpSuccess(true);
+    try {
+      setIsLoading(true);
+      await axios.post("/api/1.0/users", body);
+      setIsLoading(false);
+  
+      setSignUpSuccess(true);
+    } catch(error) {}
   };
 
   let isSignUpBtnDisabled = true;
