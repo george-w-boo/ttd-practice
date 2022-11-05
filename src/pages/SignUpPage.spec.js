@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor, waitForElementToBeRemoved } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 // import axios from "axios";
 import { setupServer } from "msw/node";
@@ -61,6 +61,7 @@ describe("SignUpPage", () => {
 
   describe("Interactions", () => {
     let signUpBtnEl;
+    const message = 'Please, check you email!';
 
     const setup = () => {
       render(<SignUpPage />);
@@ -137,7 +138,7 @@ describe("SignUpPage", () => {
 
       userEvent.click(signUpBtnEl);
 
-      await new Promise((resolve) => setTimeout(resolve), 500);
+      await screen.findByText(message)
 
       expect(requestBody).toEqual({
         username: "test-user",
@@ -166,14 +167,14 @@ describe("SignUpPage", () => {
       userEvent.click(signUpBtnEl);
       userEvent.click(signUpBtnEl);
 
-      await new Promise((resolve) => setTimeout(resolve), 500);
+      await screen.findByText(message)
 
       expect(counter).toEqual(1);
 
       server.close();
     });
 
-    it("checks if spinner is visible after clicking sign up", async () => {
+    it("renders spinner after clicking sign up", async () => {
       const server = setupServer(
         rest.post("/api/1.0/users", async (req, res, ctx) => {
 
@@ -194,7 +195,56 @@ describe("SignUpPage", () => {
 
       expect(spinnerEl).toBeInTheDocument();
 
+      await screen.findByText(message);
+
       server.close();
     });
+
+    it('renders check email alert after successful api call', async () => {
+      const server = setupServer(
+        rest.post("/api/1.0/users", async (req, res, ctx) => {
+
+          return res(ctx.status(200));
+        })
+      );
+
+      server.listen();
+      
+      setup();
+
+      let emailAlertEl = screen.queryByText(message);
+
+      expect(emailAlertEl).not.toBeInTheDocument();
+
+      userEvent.click(signUpBtnEl);
+
+      emailAlertEl = await screen.findByText(message);
+
+      expect(emailAlertEl).toBeInTheDocument();
+    });
+
+    it('hides sign-up form upon successful api call', async () => {
+      const server = setupServer(
+        rest.post("/api/1.0/users", async (req, res, ctx) => {
+
+          return res(ctx.status(200));
+        })
+      );
+
+      server.listen();
+
+      setup();
+
+      const formEl = screen.getByTestId('sign-up-form');
+
+      userEvent.click(signUpBtnEl);
+
+      await waitForElementToBeRemoved(formEl);
+
+      // alternative for waitForElementToBeRemoved:
+      // await waitFor(() => {
+      //   expect(formEl).not.toBeInTheDocument();
+      // });
+    })
   });
 });
