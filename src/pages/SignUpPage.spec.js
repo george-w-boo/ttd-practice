@@ -66,6 +66,10 @@ describe("SignUpPage", () => {
 
   describe("Interactions", () => {
     let signUpBtnEl;
+    let usernameInputEl;
+    let emailInputEl;
+    let passwordInputEl;
+
     const message = "Please, check you email!";
 
     let requestBody;
@@ -82,6 +86,7 @@ describe("SignUpPage", () => {
     );
 
     beforeAll(() => server.listen());
+
     beforeEach(() => {
       counter = 0;
       server.resetHandlers();
@@ -92,9 +97,9 @@ describe("SignUpPage", () => {
     const setup = (password = "secret", passwordRepeat = "secret") => {
       render(<SignUpPage />);
 
-      const usernameInputEl = screen.getByLabelText(/username/i);
-      const emailInputEl = screen.getByLabelText(/email/i);
-      const passwordInputEl = screen.getByLabelText("Password", {
+      usernameInputEl = screen.getByLabelText(/username/i);
+      emailInputEl = screen.getByLabelText(/email/i);
+      passwordInputEl = screen.getByLabelText("Password", {
         exact: true,
       });
       const passwordRepeatInputEl = screen.getByLabelText(/Password Repeat/i);
@@ -263,13 +268,35 @@ describe("SignUpPage", () => {
     });
 
     it("displays passwords mismatch client validation error", () => {
-      setup('secret', 'secret-two');
+      setup("secret", "secret-two");
 
       userEvent.click(signUpBtnEl);
 
-      const validationErrorEl = screen.getByText('Passwords mismatch');
+      const validationErrorEl = screen.getByText("Passwords mismatch");
 
       expect(validationErrorEl).toBeInTheDocument();
     });
+
+    it.each`
+      field         | message                      | label
+      ${"username"} | ${"Username cannot be null"} | ${"Username"}
+      ${"email"}    | ${"Email cannot be null"}    | ${"Email"}
+      ${"password"} | ${"Password cannot be null"} | ${"Password"}
+    `(
+      "clears $field validation error on typing",
+      async (field, message, label) => {
+        server.use(generateValidationError(field, message));
+
+        setup();
+
+        userEvent.click(signUpBtnEl);
+
+        const validationErrorEl = await screen.findByText(message);
+
+        userEvent.type(screen.getByLabelText(label), "updated");
+
+        expect(validationErrorEl).not.toBeInTheDocument();
+      }
+    );
   });
 });

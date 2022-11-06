@@ -18,12 +18,15 @@ function SignUpPage() {
     switch (id) {
       case "username":
         setUsername(value);
+        setErrors({ ...errors, username: "" });
         break;
       case "email":
         setEmail(value);
+        setErrors({ ...errors, email: "" });
         break;
       case "password":
         setPassword(value);
+        setErrors({ ...errors, password: "" });
         break;
       case "password-repeat":
         setPasswordRepeat(value);
@@ -100,7 +103,7 @@ function SignUpPage() {
               type="password"
               onChange={handleChange}
               value={passwordRepeat}
-              helpText={password !== passwordRepeat ? 'Passwords mismatch' : ''}
+              helpText={password !== passwordRepeat ? "Passwords mismatch" : ""}
             />
             <div className="text-center">
               <button
