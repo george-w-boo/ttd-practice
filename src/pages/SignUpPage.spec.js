@@ -8,7 +8,7 @@ import SignUpPage from "./SignUpPage";
 
 describe("SignUpPage", () => {
   describe("Layout", () => {
-    it("renders learn react link", () => {
+    it("renders SignUpPage", () => {
       render(<SignUpPage />);
 
       const headerEl = screen.getByRole("heading", { name: "Sign Up" });
@@ -227,9 +227,33 @@ describe("SignUpPage", () => {
 
       const usernameValidationErrorEl = await screen.findByText('Username cannot be null');
 
-      console.log(usernameValidationErrorEl);
+      expect(usernameValidationErrorEl).toBeInTheDocument();
+    });
+
+    it('hides spinner and makes sign-up btn enabled after response received', async () => {
+      server.use(
+        rest.post("/api/1.0/users", async (req, res, ctx) => {
+  
+          return res(
+            ctx.status(400),
+            ctx.json({
+            validationErrors: {
+              username: "Username cannot be null"
+              }
+            })
+          );
+        })
+      );
+
+      setup();
+
+      userEvent.click(signUpBtnEl);
+
+      const spinnerEl = screen.queryByRole('status', { hidden: true });
+      const usernameValidationErrorEl = await screen.findByText('Username cannot be null');
 
       expect(usernameValidationErrorEl).toBeInTheDocument();
-    })
+      expect(spinnerEl).not.toBeInTheDocument();
+    });
   });
 });

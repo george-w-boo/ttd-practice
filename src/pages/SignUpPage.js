@@ -50,6 +50,7 @@ function SignUpPage() {
       if (error.response.status === 400) {
         setErrors(error.response.data.validationErrors);
       }
+      setIsLoading(false);
     }
   };
 
