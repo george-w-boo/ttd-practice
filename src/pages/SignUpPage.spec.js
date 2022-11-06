@@ -89,7 +89,7 @@ describe("SignUpPage", () => {
 
     afterAll(() => server.close());
 
-    const setup = () => {
+    const setup = (password = "secret", passwordRepeat = "secret") => {
       render(<SignUpPage />);
 
       const usernameInputEl = screen.getByLabelText(/username/i);
@@ -102,8 +102,8 @@ describe("SignUpPage", () => {
 
       userEvent.type(usernameInputEl, "test-user");
       userEvent.type(emailInputEl, "test@test.com");
-      userEvent.type(passwordInputEl, "secret");
-      userEvent.type(passwordRepeatInputEl, "secret");
+      userEvent.type(passwordInputEl, password);
+      userEvent.type(passwordRepeatInputEl, passwordRepeat);
     };
 
     it("enables sign-up btn if password and password repeat are the same", () => {
@@ -258,6 +258,16 @@ describe("SignUpPage", () => {
       userEvent.click(signUpBtnEl);
 
       const validationErrorEl = await screen.findByText(message);
+
+      expect(validationErrorEl).toBeInTheDocument();
+    });
+
+    it("displays passwords mismatch client validation error", () => {
+      setup('secret', 'secret-two');
+
+      userEvent.click(signUpBtnEl);
+
+      const validationErrorEl = screen.getByText('Passwords mismatch');
 
       expect(validationErrorEl).toBeInTheDocument();
     });

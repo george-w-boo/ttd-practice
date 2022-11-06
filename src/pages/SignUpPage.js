@@ -100,6 +100,7 @@ function SignUpPage() {
               type="password"
               onChange={handleChange}
               value={passwordRepeat}
+              helpText={password !== passwordRepeat ? 'Passwords mismatch' : ''}
             />
             <div className="text-center">
               <button
