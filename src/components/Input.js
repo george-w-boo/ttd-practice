@@ -5,14 +5,14 @@ const Input = ({id, label, type, onChange, value, helpText }) => {
     <div className="mb-3">
     <label className="form-label" htmlFor={id}>{label}</label>
     <input
-      className="form-control"
+      className={`form-control ${helpText ? 'is-invalid' : ''}`}
       id={id}
       type={type}
       onChange={onChange}
       value={value}
       aria-describedby="usernameHelp"
     />
-    <div id="usernameHelp" className="form-text">{helpText}</div>
+    <span className="invalid-feedback">{helpText}</span>
   </div>
   )
 }

@@ -1,4 +1,9 @@
-import { render, screen, waitFor, waitForElementToBeRemoved } from "@testing-library/react";
+import {
+  render,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 // import axios from "axios";
 import { setupServer } from "msw/node";
@@ -61,7 +66,7 @@ describe("SignUpPage", () => {
 
   describe("Interactions", () => {
     let signUpBtnEl;
-    const message = 'Please, check you email!';
+    const message = "Please, check you email!";
 
     let requestBody;
     let counter = 0;
@@ -75,7 +80,7 @@ describe("SignUpPage", () => {
         return res(ctx.status(200));
       })
     );
-    
+
     beforeAll(() => server.listen());
     beforeEach(() => {
       counter = 0;
@@ -99,7 +104,7 @@ describe("SignUpPage", () => {
       userEvent.type(emailInputEl, "test@test.com");
       userEvent.type(passwordInputEl, "secret");
       userEvent.type(passwordRepeatInputEl, "secret");
-    }
+    };
 
     it("enables sign-up btn if password and password repeat are the same", () => {
       setup();
@@ -145,7 +150,7 @@ describe("SignUpPage", () => {
 
       userEvent.click(signUpBtnEl);
 
-      await screen.findByText(message)
+      await screen.findByText(message);
 
       expect(requestBody).toEqual({
         username: "test-user",
@@ -160,27 +165,27 @@ describe("SignUpPage", () => {
       userEvent.click(signUpBtnEl);
       userEvent.click(signUpBtnEl);
 
-      await screen.findByText(message)
+      await screen.findByText(message);
 
       expect(counter).toEqual(1);
     });
 
     it("renders spinner after clicking sign up", async () => {
       setup();
-      
-      let spinnerEl = screen.queryByRole('status', { hidden: true });
+
+      let spinnerEl = screen.queryByRole("status", { hidden: true });
 
       expect(spinnerEl).not.toBeInTheDocument();
       userEvent.click(signUpBtnEl);
-      
-      spinnerEl = screen.queryByRole('status', { hidden: true });
+
+      spinnerEl = screen.queryByRole("status", { hidden: true });
 
       expect(spinnerEl).toBeInTheDocument();
 
       await screen.findByText(message);
     });
 
-    it('renders check email alert after successful api call', async () => {
+    it("renders check email alert after successful api call", async () => {
       setup();
 
       let emailAlertEl = screen.queryByText(message);
@@ -194,10 +199,10 @@ describe("SignUpPage", () => {
       expect(emailAlertEl).toBeInTheDocument();
     });
 
-    it('hides sign-up form upon successful api call', async () => {
+    it("hides sign-up form upon successful api call", async () => {
       setup();
 
-      const formEl = screen.getByTestId('sign-up-form');
+      const formEl = screen.getByTestId("sign-up-form");
 
       userEvent.click(signUpBtnEl);
 
@@ -209,54 +214,52 @@ describe("SignUpPage", () => {
       // });
     });
 
-    it('displays validation error for username', async () => {
-      server.use(
-        rest.post("/api/1.0/users", async (req, res, ctx) => {
-  
-          return res(
-            ctx.status(400),
-            ctx.json({
+    const generateValidationError = (field, message) => {
+      return rest.post("/api/1.0/users", async (req, res, ctx) => {
+        return res(
+          ctx.status(400),
+          ctx.json({
             validationErrors: {
-              username: "Username cannot be null"
-              }
-            })
-          );
-        })
+              [field]: message,
+            },
+          })
+        );
+      });
+    };
+
+    it("hides spinner and makes sign-up btn enabled after response received", async () => {
+      server.use(
+        generateValidationError("username", "Username cannot be null")
       );
 
       setup();
 
       userEvent.click(signUpBtnEl);
 
-      const usernameValidationErrorEl = await screen.findByText('Username cannot be null');
-
-      expect(usernameValidationErrorEl).toBeInTheDocument();
-    });
-
-    it('hides spinner and makes sign-up btn enabled after response received', async () => {
-      server.use(
-        rest.post("/api/1.0/users", async (req, res, ctx) => {
-  
-          return res(
-            ctx.status(400),
-            ctx.json({
-            validationErrors: {
-              username: "Username cannot be null"
-              }
-            })
-          );
-        })
+      const spinnerEl = screen.queryByRole("status", { hidden: true });
+      const usernameValidationErrorEl = await screen.findByText(
+        "Username cannot be null"
       );
-
-      setup();
-
-      userEvent.click(signUpBtnEl);
-
-      const spinnerEl = screen.queryByRole('status', { hidden: true });
-      const usernameValidationErrorEl = await screen.findByText('Username cannot be null');
 
       expect(usernameValidationErrorEl).toBeInTheDocument();
       expect(spinnerEl).not.toBeInTheDocument();
+    });
+
+    it.each`
+      field         | message
+      ${"username"} | ${"Username cannot be null"}
+      ${"email"}    | ${"Email cannot be null"}
+      ${"password"} | ${"Password cannot be null"}
+    `("displays $message for $field", async ({ field, message }) => {
+      server.use(generateValidationError(field, message));
+
+      setup();
+
+      userEvent.click(signUpBtnEl);
+
+      const validationErrorEl = await screen.findByText(message);
+
+      expect(validationErrorEl).toBeInTheDocument();
     });
   });
 });
