@@ -204,6 +204,32 @@ describe("SignUpPage", () => {
       // await waitFor(() => {
       //   expect(formEl).not.toBeInTheDocument();
       // });
+    });
+
+    it('displays validation error for username', async () => {
+      server.use(
+        rest.post("/api/1.0/users", async (req, res, ctx) => {
+  
+          return res(
+            ctx.status(400),
+            ctx.json({
+            validationErrors: {
+              username: "Username cannot be null"
+              }
+            })
+          );
+        })
+      );
+
+      setup();
+
+      userEvent.click(signUpBtnEl);
+
+      const usernameValidationErrorEl = await screen.findByText('Username cannot be null');
+
+      console.log(usernameValidationErrorEl);
+
+      expect(usernameValidationErrorEl).toBeInTheDocument();
     })
   });
 });

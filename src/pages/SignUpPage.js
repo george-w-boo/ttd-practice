@@ -8,6 +8,7 @@ function SignUpPage() {
   const [passwordRepeat, setPasswordRepeat] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
+  const [errors, setErrors] = useState(null);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -45,7 +46,11 @@ function SignUpPage() {
       setIsLoading(false);
   
       setSignUpSuccess(true);
-    } catch(error) {}
+    } catch(error) {
+      if (error.response.status === 400) {
+        setErrors(error.response.data.validationErrors);
+      }
+    }
   };
 
   let isSignUpBtnDisabled = true;
@@ -71,7 +76,7 @@ function SignUpPage() {
               value={username}
               aria-describedby="usernameHelp"
             />
-            <div id="usernameHelp" className="form-text">We'll never share your email with anyone else.</div>
+            <div id="usernameHelp" className="form-text">{errors?.username}</div>
           </div>
           <div className="mb-3">
             <label className="form-label" htmlFor="email">Email</label>
