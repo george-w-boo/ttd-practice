@@ -77,7 +77,10 @@ describe("SignUpPage", () => {
     );
     
     beforeAll(() => server.listen());
-    beforeEach(() => counter = 0);
+    beforeEach(() => {
+      counter = 0;
+      server.resetHandlers();
+    });
 
     afterAll(() => server.close());
 

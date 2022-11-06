@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 
+import Input from "../components/Input";
+
 function SignUpPage() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -11,9 +13,9 @@ function SignUpPage() {
   const [errors, setErrors] = useState(null);
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
+    const { id, value } = event.target;
 
-    switch (name) {
+    switch (id) {
       case "username":
         setUsername(value);
         break;
@@ -67,53 +69,38 @@ function SignUpPage() {
           <h1 className="text-center">Sign Up</h1>
         </div>
         <div className="card-body">
-          <div className="mb-3">
-            <label className="form-label" htmlFor="username">Username</label>
-            <input
-              className="form-control"
-              name="username"
-              id="username"
-              onChange={handleChange}
-              value={username}
-              aria-describedby="usernameHelp"
-            />
-            <div id="usernameHelp" className="form-text">{errors?.username}</div>
-          </div>
-          <div className="mb-3">
-            <label className="form-label" htmlFor="email">Email</label>
-            <input
-              className="form-control"
-              name="email"
-              id="email"
-              type="email"
-              onChange={handleChange}
-              value={email}
-              aria-describedby="emailHelp"
-            />
-            <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
-          </div>
-          <div className="mb-3">
-            <label className="form-label" htmlFor="password">Password</label>
-            <input
-              className="form-control"
-              name="password"
-              id="password"
-              type="password"
-              onChange={handleChange}
-              value={password}
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label" htmlFor="password-repeat">Password Repeat</label>
-            <input
-              className="form-control"
-              name="password-repeat"
-              id="password-repeat"
-              type="password"
-              onChange={handleChange}
-              value={passwordRepeat}
-            />
-          </div>
+          <Input
+            id="username"
+            label="Username"
+            type="text"
+            onChange={handleChange}
+            value={username}
+            helpText={errors?.username}
+          />
+          <Input
+            id="email"
+            label="Email"
+            type="email"
+            onChange={handleChange}
+            value={email}
+            helpText={errors?.email}
+          />
+          <Input
+            id="password"
+            label="Password"
+            type="password"
+            onChange={handleChange}
+            value={password}
+            helpText={errors?.password}
+          />
+          <Input
+            id="password-repeat"
+            label="Password Repeat"
+            type="password"
+            onChange={handleChange}
+            value={passwordRepeat}
+            helpText={errors?.password}
+          />
           <div className="text-center">
             <button className="btn btn-primary" disabled={isSignUpBtnDisabled || isLoading} onClick={handleSignUp}>
               {isLoading && <span className="spinner-border spinner-border-sm" role="status" aria-hidden={true}></span>}
