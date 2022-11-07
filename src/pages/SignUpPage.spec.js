@@ -284,7 +284,7 @@ describe("SignUpPage", () => {
       ${"password"} | ${"Password cannot be null"} | ${"Password"}
     `(
       "clears $field validation error on typing",
-      async (field, message, label) => {
+      async ({field, message, label}) => {
         server.use(generateValidationError(field, message));
 
         setup();
