@@ -16,6 +16,29 @@ import SignUpPage from "./SignUpPage";
 import LanguageSelector from "../components/LanguageSelector";
 import { act } from "react-dom/test-utils";
 
+let requestBody;
+let counter = 0;
+let acceptLanguageHeader;
+
+const server = setupServer(
+  rest.post("/api/1.0/users", async (req, res, ctx) => {
+    requestBody = await req.json();
+    counter += 1;
+    acceptLanguageHeader = req.headers.get("Accept-Language");
+
+    return res(ctx.status(200));
+  })
+);
+
+beforeAll(() => server.listen());
+
+beforeEach(() => {
+  counter = 0;
+  server.resetHandlers();
+});
+
+afterAll(() => server.close());
+
 describe("SignUpPage", () => {
   describe("Layout", () => {
     it("renders SignUpPage", () => {
@@ -76,28 +99,6 @@ describe("SignUpPage", () => {
     let passwordInputEl;
 
     const message = "Please, check you email!";
-
-    let requestBody;
-    let counter = 0;
-
-    const server = setupServer(
-      rest.post("/api/1.0/users", async (req, res, ctx) => {
-        requestBody = await req.json();
-
-        counter += 1;
-
-        return res(ctx.status(200));
-      })
-    );
-
-    beforeAll(() => server.listen());
-
-    beforeEach(() => {
-      counter = 0;
-      server.resetHandlers();
-    });
-
-    afterAll(() => server.close());
 
     const setup = (password = "secret", passwordRepeat = "secret") => {
       render(<SignUpPage />);
@@ -308,6 +309,9 @@ describe("SignUpPage", () => {
   describe("Internalization", () => {
     let ukrainianToggleEl;
     let englishToggleEl;
+    let passwordInputEl;
+    let passwordRepeatInputEl;
+    let signUpBtnEl;
 
     const setup = () => {
       render(
@@ -319,6 +323,13 @@ describe("SignUpPage", () => {
 
       ukrainianToggleEl = screen.getByTitle("Українська");
       englishToggleEl = screen.getByTitle("English");
+
+      passwordInputEl = screen.getByLabelText(en.password, {
+        exact: true,
+      });
+      passwordRepeatInputEl = screen.getByLabelText(en.passwordRepeat);
+
+      signUpBtnEl = screen.getByRole("button", { name: en.signUp });
     };
 
     afterEach(() => act(() => i18n.changeLanguage("en")));
@@ -329,11 +340,6 @@ describe("SignUpPage", () => {
       const headerEl = screen.getByRole("heading", { name: en.signUp });
       const usernameInputEl = screen.getByLabelText(en.username);
       const emailInputEl = screen.getByLabelText(en.email);
-      const passwordInputEl = screen.getByLabelText(en.password, {
-        exact: true,
-      });
-      const passwordRepeatInputEl = screen.getByLabelText(en.passwordRepeat);
-      const signUpBtnEl = screen.getByRole("button", { name: en.signUp });
 
       expect(headerEl).toBeInTheDocument();
       expect(usernameInputEl).toBeInTheDocument();
@@ -373,11 +379,6 @@ describe("SignUpPage", () => {
       const headerEl = screen.getByRole("heading", { name: en.signUp });
       const usernameInputEl = screen.getByLabelText(en.username);
       const emailInputEl = screen.getByLabelText(en.email);
-      const passwordInputEl = screen.getByLabelText(en.password, {
-        exact: true,
-      });
-      const passwordRepeatInputEl = screen.getByLabelText(en.passwordRepeat);
-      const signUpBtnEl = screen.getByRole("button", { name: en.signUp });
 
       expect(headerEl).toBeInTheDocument();
       expect(usernameInputEl).toBeInTheDocument();
@@ -390,10 +391,6 @@ describe("SignUpPage", () => {
     it("displays passwords mismatch validation alert in Ukrainian", () => {
       setup();
 
-      const passwordInputEl = screen.getByLabelText(en.password, {
-        exact: true,
-      });
-
       userEvent.type(passwordInputEl, "update");
       userEvent.click(ukrainianToggleEl);
 
@@ -402,6 +399,37 @@ describe("SignUpPage", () => {
       );
 
       expect(validationErrorEl).toBeInTheDocument();
+    });
+
+    it("sends accept language header as en for outgoing request", async () => {
+      setup();
+
+      userEvent.type(passwordInputEl, "P4ssword");
+      userEvent.type(passwordRepeatInputEl, "P4ssword");
+
+      const signUpFormEl = screen.queryByTestId("sign-up-form");
+
+      userEvent.click(signUpBtnEl);
+
+      await waitForElementToBeRemoved(signUpFormEl);
+
+      expect(acceptLanguageHeader).toBe("en");
+    });
+
+    it("sends accept language header as ua for outgoing request if ua is selected", async () => {
+      setup();
+
+      userEvent.type(passwordInputEl, "P4ssword");
+      userEvent.type(passwordRepeatInputEl, "P4ssword");
+
+      const signUpFormEl = screen.queryByTestId("sign-up-form");
+
+      userEvent.click(ukrainianToggleEl);
+      userEvent.click(signUpBtnEl);
+
+      await waitForElementToBeRemoved(signUpFormEl);
+
+      expect(acceptLanguageHeader).toBe("ua");
     });
   });
 });

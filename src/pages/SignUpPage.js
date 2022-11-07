@@ -3,6 +3,7 @@ import axios from "axios";
 import { withTranslation } from "react-i18next";
 
 import Input from "../components/Input";
+import i18n from "../locale/i18n";
 
 function SignUpPage({ t }) {
   const [username, setUsername] = useState("");
@@ -48,7 +49,11 @@ function SignUpPage({ t }) {
 
     try {
       setIsLoading(true);
-      await axios.post("/api/1.0/users", body);
+      await axios.post("/api/1.0/users", body, {
+        headers: {
+          "Accept-Language": i18n.language,
+        },
+      });
       setIsLoading(false);
 
       setSignUpSuccess(true);
