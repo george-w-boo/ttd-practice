@@ -8,6 +8,9 @@ const LanguageSelector = () => {
       style={{
         display: "flex",
         gap: "2px",
+        marginLeft: "12px",
+        alignItems: "center",
+        cursor: "pointer",
       }}
     >
       <img

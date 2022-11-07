@@ -3,6 +3,7 @@ import { withTranslation } from "react-i18next";
 
 import Input from "../components/Input";
 import i18n from "../locale/i18n";
+import testIDs from "../test-ids.json";
 
 import { signup } from "../api/apiCalls";
 
@@ -71,7 +72,7 @@ function SignUpPage({ t }) {
   return (
     <div className="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
       {!signUpSuccess && (
-        <form className="card mt-5" data-testid="sign-up-form">
+        <form className="card mt-5" data-testid={testIDs.signUpPage}>
           <div className="card-header">
             <h1 className="text-center">{t("signUp")}</h1>
           </div>

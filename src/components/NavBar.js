@@ -1,23 +1,27 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { t } from "i18next";
 
 import logo from "../assets/hoaxify.png";
+
+import LanguageSelector from "./LanguageSelector";
 
 const NavBar = () => {
   return (
     <nav className="navbar navbar-expand navbar-light bg-light shadow-sm">
       <div className="container">
-        <a className="navbar-brand" href="/" title="Home" onClick={() => {}}>
+        <Link className="navbar-brand" to="/" title="Home">
           <img src={logo} width="60" alt="hoaxify logo" />
           Hoaxify
-        </a>
+        </Link>
         <ul className="navbar-nav">
-          <a className="nav-link" href="/signup" onClick={() => {}}>
+          <Link className="nav-link" to="/signup">
             {t("signUp")}
-          </a>
-          <a className="nav-link" href="/login" onClick={() => {}}>
+          </Link>
+          <Link className="nav-link" to="/login">
             Login
-          </a>
+          </Link>
+          <LanguageSelector />
         </ul>
       </div>
     </nav>
