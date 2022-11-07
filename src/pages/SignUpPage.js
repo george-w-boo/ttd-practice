@@ -4,7 +4,7 @@ import { withTranslation } from "react-i18next";
 
 import Input from "../components/Input";
 
-function SignUpPage({ t, i18n }) {
+function SignUpPage({ t }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -60,9 +60,6 @@ function SignUpPage({ t, i18n }) {
     }
   };
 
-  const switchToUkrainian = () => i18n.changeLanguage("ua");
-  const switchToEnglish = () => i18n.changeLanguage("en");
-
   let isSignUpBtnDisabled = true;
 
   if (password && passwordRepeat) {
@@ -107,7 +104,11 @@ function SignUpPage({ t, i18n }) {
               type="password"
               onChange={handleChange}
               value={passwordRepeat}
-              helpText={password !== passwordRepeat ? "Passwords mismatch" : ""}
+              helpText={
+                password !== passwordRepeat
+                  ? t("validationPasswordsMismatch")
+                  : ""
+              }
             />
             <div className="text-center">
               <button
@@ -133,24 +134,6 @@ function SignUpPage({ t, i18n }) {
           Please, check you email!
         </div>
       )}
-      <img
-        src="https://flagcdn.com/h20/ua.png"
-        srcset="https://flagcdn.com/h40/ua.png 2x,
-          https://flagcdn.com/h60/ua.png 3x"
-        height="20"
-        title="Українська"
-        onClick={switchToUkrainian}
-        alt="Українська"
-      />
-      <img
-        src="https://flagcdn.com/h20/us.png"
-        srcset="https://flagcdn.com/h40/us.png 2x,
-          https://flagcdn.com/h60/us.png 3x"
-        height="20"
-        title="English"
-        onClick={switchToEnglish}
-        alt="English"
-      />
     </div>
   );
 }

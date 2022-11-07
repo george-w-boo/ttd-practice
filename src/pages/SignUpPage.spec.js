@@ -9,10 +9,12 @@ import userEvent from "@testing-library/user-event";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
 
-import "../locale/i18n";
+import i18n from "../locale/i18n";
 import en from "../locale/en.json";
 import ua from "../locale/ua.json";
 import SignUpPage from "./SignUpPage";
+import LanguageSelector from "../components/LanguageSelector";
+import { act } from "react-dom/test-utils";
 
 describe("SignUpPage", () => {
   describe("Layout", () => {
@@ -304,8 +306,25 @@ describe("SignUpPage", () => {
   });
 
   describe("Internalization", () => {
+    let ukrainianToggleEl;
+    let englishToggleEl;
+
+    const setup = () => {
+      render(
+        <>
+          <LanguageSelector />
+          <SignUpPage />
+        </>
+      );
+
+      ukrainianToggleEl = screen.getByTitle("Українська");
+      englishToggleEl = screen.getByTitle("English");
+    };
+
+    afterEach(() => act(() => i18n.changeLanguage("en")));
+
     it("initially renders SignUpPage in English", () => {
-      render(<SignUpPage />);
+      setup();
 
       const headerEl = screen.getByRole("heading", { name: en.signUp });
       const usernameInputEl = screen.getByLabelText(en.username);
@@ -325,9 +344,7 @@ describe("SignUpPage", () => {
     });
 
     it("renders SignUpPage in Ukrainian after changing the language", () => {
-      render(<SignUpPage />);
-
-      const ukrainianToggleEl = screen.getByTitle("Українська");
+      setup();
 
       userEvent.click(ukrainianToggleEl);
 
@@ -349,9 +366,7 @@ describe("SignUpPage", () => {
     });
 
     it("renders SignUpPage in English after switching to English", () => {
-      render(<SignUpPage />);
-
-      const englishToggleEl = screen.getByTitle("English");
+      setup();
 
       userEvent.click(englishToggleEl);
 
@@ -370,6 +385,23 @@ describe("SignUpPage", () => {
       expect(passwordInputEl).toBeInTheDocument();
       expect(passwordRepeatInputEl).toBeInTheDocument();
       expect(signUpBtnEl).toBeInTheDocument();
+    });
+
+    it("displays passwords mismatch validation alert in Ukrainian", () => {
+      setup();
+
+      const passwordInputEl = screen.getByLabelText(en.password, {
+        exact: true,
+      });
+
+      userEvent.type(passwordInputEl, "update");
+      userEvent.click(ukrainianToggleEl);
+
+      const validationErrorEl = screen.getByText(
+        ua.validationPasswordsMismatch
+      );
+
+      expect(validationErrorEl).toBeInTheDocument();
     });
   });
 });
