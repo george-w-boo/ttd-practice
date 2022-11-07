@@ -8,8 +8,10 @@ import userEvent from "@testing-library/user-event";
 // import axios from "axios";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
-import "../locale/i18n";
 
+import "../locale/i18n";
+import en from "../locale/en.json";
+import ua from "../locale/ua.json";
 import SignUpPage from "./SignUpPage";
 
 describe("SignUpPage", () => {
@@ -299,5 +301,75 @@ describe("SignUpPage", () => {
         expect(validationErrorEl).not.toBeInTheDocument();
       }
     );
+  });
+
+  describe("Internalization", () => {
+    it("initially renders SignUpPage in English", () => {
+      render(<SignUpPage />);
+
+      const headerEl = screen.getByRole("heading", { name: en.signUp });
+      const usernameInputEl = screen.getByLabelText(en.username);
+      const emailInputEl = screen.getByLabelText(en.email);
+      const passwordInputEl = screen.getByLabelText(en.password, {
+        exact: true,
+      });
+      const passwordRepeatInputEl = screen.getByLabelText(en.passwordRepeat);
+      const signUpBtnEl = screen.getByRole("button", { name: en.signUp });
+
+      expect(headerEl).toBeInTheDocument();
+      expect(usernameInputEl).toBeInTheDocument();
+      expect(emailInputEl).toBeInTheDocument();
+      expect(passwordInputEl).toBeInTheDocument();
+      expect(passwordRepeatInputEl).toBeInTheDocument();
+      expect(signUpBtnEl).toBeInTheDocument();
+    });
+
+    it("renders SignUpPage in Ukrainian after changing the language", () => {
+      render(<SignUpPage />);
+
+      const ukrainianToggleEl = screen.getByTitle("Українська");
+
+      userEvent.click(ukrainianToggleEl);
+
+      const headerEl = screen.getByRole("heading", { name: ua.signUp });
+      const usernameInputEl = screen.getByLabelText(ua.username);
+      const emailInputEl = screen.getByLabelText(ua.email);
+      const passwordInputEl = screen.getByLabelText(ua.password, {
+        exact: true,
+      });
+      const passwordRepeatInputEl = screen.getByLabelText(ua.passwordRepeat);
+      const signUpBtnEl = screen.getByRole("button", { name: ua.signUp });
+
+      expect(headerEl).toBeInTheDocument();
+      expect(usernameInputEl).toBeInTheDocument();
+      expect(emailInputEl).toBeInTheDocument();
+      expect(passwordInputEl).toBeInTheDocument();
+      expect(passwordRepeatInputEl).toBeInTheDocument();
+      expect(signUpBtnEl).toBeInTheDocument();
+    });
+
+    it("renders SignUpPage in English after switching to English", () => {
+      render(<SignUpPage />);
+
+      const englishToggleEl = screen.getByTitle("English");
+
+      userEvent.click(englishToggleEl);
+
+      const headerEl = screen.getByRole("heading", { name: en.signUp });
+      const usernameInputEl = screen.getByLabelText(en.username);
+      const emailInputEl = screen.getByLabelText(en.email);
+      const passwordInputEl = screen.getByLabelText(en.password, {
+        exact: true,
+      });
+      const passwordRepeatInputEl = screen.getByLabelText(en.passwordRepeat);
+      const signUpBtnEl = screen.getByRole("button", { name: en.signUp });
+
+      expect(headerEl).toBeInTheDocument();
+      expect(usernameInputEl).toBeInTheDocument();
+      expect(emailInputEl).toBeInTheDocument();
+      expect(passwordInputEl).toBeInTheDocument();
+      expect(passwordRepeatInputEl).toBeInTheDocument();
+      expect(signUpBtnEl).toBeInTheDocument();
+    });
   });
 });
