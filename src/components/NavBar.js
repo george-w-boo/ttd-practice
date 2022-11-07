@@ -15,10 +15,10 @@ const NavBar = () => {
           Hoaxify
         </Link>
         <ul className="navbar-nav">
-          <Link className="nav-link" to="/signup">
+          <Link className="nav-link" to="/signup" title="SignUp">
             {t("signUp")}
           </Link>
-          <Link className="nav-link" to="/login">
+          <Link className="nav-link" to="/login" title="Login">
             Login
           </Link>
           <LanguageSelector />
