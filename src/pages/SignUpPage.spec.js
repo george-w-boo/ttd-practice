@@ -8,6 +8,7 @@ import userEvent from "@testing-library/user-event";
 // import axios from "axios";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
+import "../locale/i18n";
 
 import SignUpPage from "./SignUpPage";
 
@@ -284,7 +285,7 @@ describe("SignUpPage", () => {
       ${"password"} | ${"Password cannot be null"} | ${"Password"}
     `(
       "clears $field validation error on typing",
-      async ({field, message, label}) => {
+      async ({ field, message, label }) => {
         server.use(generateValidationError(field, message));
 
         setup();

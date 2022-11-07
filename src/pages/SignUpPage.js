@@ -1,9 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
+import { withTranslation } from "react-i18next";
 
 import Input from "../components/Input";
 
-function SignUpPage() {
+function SignUpPage({ t }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -70,12 +71,12 @@ function SignUpPage() {
       {!signUpSuccess && (
         <form className="card mt-5" data-testid="sign-up-form">
           <div className="card-header">
-            <h1 className="text-center">Sign Up</h1>
+            <h1 className="text-center">{t("signUp")}</h1>
           </div>
           <div className="card-body">
             <Input
               id="username"
-              label="Username"
+              label={t("username")}
               type="text"
               onChange={handleChange}
               value={username}
@@ -83,7 +84,7 @@ function SignUpPage() {
             />
             <Input
               id="email"
-              label="Email"
+              label={t("email")}
               type="email"
               onChange={handleChange}
               value={email}
@@ -91,7 +92,7 @@ function SignUpPage() {
             />
             <Input
               id="password"
-              label="Password"
+              label={t("password")}
               type="password"
               onChange={handleChange}
               value={password}
@@ -99,7 +100,7 @@ function SignUpPage() {
             />
             <Input
               id="password-repeat"
-              label="Password Repeat"
+              label={t("passwordRepeat")}
               type="password"
               onChange={handleChange}
               value={passwordRepeat}
@@ -118,7 +119,7 @@ function SignUpPage() {
                     aria-hidden={true}
                   ></span>
                 )}
-                Sign Up
+                {t("signUp")}
               </button>
             </div>
           </div>
@@ -133,4 +134,6 @@ function SignUpPage() {
   );
 }
 
-export default SignUpPage;
+const SignUpPageWithTranslation = withTranslation()(SignUpPage);
+
+export default SignUpPageWithTranslation;
