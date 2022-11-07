@@ -1,9 +1,10 @@
 import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
+import userEvent from "@testing-library/user-event";
 
 import testIDs from "./test-ids.json";
 
 import App from "./App";
-import { MemoryRouter } from "react-router-dom";
 
 describe("App", () => {
   describe("App routing", () => {
@@ -58,5 +59,25 @@ describe("App", () => {
 
       expect(homePageEl).not.toBeInTheDocument();
     });
+
+    it.each`
+      targetPage      | path         | name        | testId
+      ${"HomePage"}   | ${"/signup"} | ${"Home"}   | ${testIDs.homePage}
+      ${"SignUpPage"} | ${"/"}       | ${"SignUp"} | ${testIDs.signUpPage}
+      ${"LoginPage"}  | ${"/signup"} | ${"Login"}  | ${testIDs.loginPage}
+    `(
+      "leads to $targetPage upon clicking navLink $name",
+      ({ _, path, name, testId }) => {
+        setup(path);
+
+        const linkEl = screen.getByRole("link", { name });
+
+        userEvent.click(linkEl);
+
+        const targetPageEl = screen.queryByTestId(testId);
+
+        expect(targetPageEl).toBeInTheDocument();
+      }
+    );
   });
 });
