@@ -9,7 +9,35 @@ import userEvent from "@testing-library/user-event";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
 
+import i18n from "../locale/i18n";
+import en from "../locale/en.json";
+import ua from "../locale/ua.json";
 import SignUpPage from "./SignUpPage";
+import LanguageSelector from "../components/LanguageSelector";
+import { act } from "react-dom/test-utils";
+
+let requestBody;
+let counter = 0;
+let acceptLanguageHeader;
+
+const server = setupServer(
+  rest.post("/api/1.0/users", async (req, res, ctx) => {
+    requestBody = await req.json();
+    counter += 1;
+    acceptLanguageHeader = req.headers.get("Accept-Language");
+
+    return res(ctx.status(200));
+  })
+);
+
+beforeAll(() => server.listen());
+
+beforeEach(() => {
+  counter = 0;
+  server.resetHandlers();
+});
+
+afterAll(() => server.close());
 
 describe("SignUpPage", () => {
   describe("Layout", () => {
@@ -71,28 +99,6 @@ describe("SignUpPage", () => {
     let passwordInputEl;
 
     const message = "Please, check you email!";
-
-    let requestBody;
-    let counter = 0;
-
-    const server = setupServer(
-      rest.post("/api/1.0/users", async (req, res, ctx) => {
-        requestBody = await req.json();
-
-        counter += 1;
-
-        return res(ctx.status(200));
-      })
-    );
-
-    beforeAll(() => server.listen());
-
-    beforeEach(() => {
-      counter = 0;
-      server.resetHandlers();
-    });
-
-    afterAll(() => server.close());
 
     const setup = (password = "secret", passwordRepeat = "secret") => {
       render(<SignUpPage />);
@@ -284,7 +290,7 @@ describe("SignUpPage", () => {
       ${"password"} | ${"Password cannot be null"} | ${"Password"}
     `(
       "clears $field validation error on typing",
-      async ({field, message, label}) => {
+      async ({ field, message, label }) => {
         server.use(generateValidationError(field, message));
 
         setup();
@@ -298,5 +304,132 @@ describe("SignUpPage", () => {
         expect(validationErrorEl).not.toBeInTheDocument();
       }
     );
+  });
+
+  describe("Internalization", () => {
+    let ukrainianToggleEl;
+    let englishToggleEl;
+    let passwordInputEl;
+    let passwordRepeatInputEl;
+    let signUpBtnEl;
+
+    const setup = () => {
+      render(
+        <>
+          <LanguageSelector />
+          <SignUpPage />
+        </>
+      );
+
+      ukrainianToggleEl = screen.getByTitle("Українська");
+      englishToggleEl = screen.getByTitle("English");
+
+      passwordInputEl = screen.getByLabelText(en.password, {
+        exact: true,
+      });
+      passwordRepeatInputEl = screen.getByLabelText(en.passwordRepeat);
+
+      signUpBtnEl = screen.getByRole("button", { name: en.signUp });
+    };
+
+    afterEach(() => act(() => i18n.changeLanguage("en")));
+
+    it("initially renders SignUpPage in English", () => {
+      setup();
+
+      const headerEl = screen.getByRole("heading", { name: en.signUp });
+      const usernameInputEl = screen.getByLabelText(en.username);
+      const emailInputEl = screen.getByLabelText(en.email);
+
+      expect(headerEl).toBeInTheDocument();
+      expect(usernameInputEl).toBeInTheDocument();
+      expect(emailInputEl).toBeInTheDocument();
+      expect(passwordInputEl).toBeInTheDocument();
+      expect(passwordRepeatInputEl).toBeInTheDocument();
+      expect(signUpBtnEl).toBeInTheDocument();
+    });
+
+    it("renders SignUpPage in Ukrainian after changing the language", () => {
+      setup();
+
+      userEvent.click(ukrainianToggleEl);
+
+      const headerEl = screen.getByRole("heading", { name: ua.signUp });
+      const usernameInputEl = screen.getByLabelText(ua.username);
+      const emailInputEl = screen.getByLabelText(ua.email);
+      const passwordInputEl = screen.getByLabelText(ua.password, {
+        exact: true,
+      });
+      const passwordRepeatInputEl = screen.getByLabelText(ua.passwordRepeat);
+      const signUpBtnEl = screen.getByRole("button", { name: ua.signUp });
+
+      expect(headerEl).toBeInTheDocument();
+      expect(usernameInputEl).toBeInTheDocument();
+      expect(emailInputEl).toBeInTheDocument();
+      expect(passwordInputEl).toBeInTheDocument();
+      expect(passwordRepeatInputEl).toBeInTheDocument();
+      expect(signUpBtnEl).toBeInTheDocument();
+    });
+
+    it("renders SignUpPage in English after switching to English", () => {
+      setup();
+
+      userEvent.click(englishToggleEl);
+
+      const headerEl = screen.getByRole("heading", { name: en.signUp });
+      const usernameInputEl = screen.getByLabelText(en.username);
+      const emailInputEl = screen.getByLabelText(en.email);
+
+      expect(headerEl).toBeInTheDocument();
+      expect(usernameInputEl).toBeInTheDocument();
+      expect(emailInputEl).toBeInTheDocument();
+      expect(passwordInputEl).toBeInTheDocument();
+      expect(passwordRepeatInputEl).toBeInTheDocument();
+      expect(signUpBtnEl).toBeInTheDocument();
+    });
+
+    it("displays passwords mismatch validation alert in Ukrainian", () => {
+      setup();
+
+      userEvent.type(passwordInputEl, "update");
+      userEvent.click(ukrainianToggleEl);
+
+      const validationErrorEl = screen.getByText(
+        ua.validationPasswordsMismatch
+      );
+
+      expect(validationErrorEl).toBeInTheDocument();
+    });
+
+    it("sends accept language header as en for outgoing request", async () => {
+      setup();
+
+      userEvent.type(passwordInputEl, "P4ssword");
+      userEvent.type(passwordRepeatInputEl, "P4ssword");
+
+      const signUpFormEl = screen.queryByTestId("sign-up-form");
+
+      userEvent.click(signUpBtnEl);
+
+      await waitForElementToBeRemoved(signUpFormEl);
+
+      expect(acceptLanguageHeader).toBe("en");
+    });
+
+    it("sends accept language header as ua for outgoing request if ua is selected", async () => {
+      setup();
+
+      userEvent.type(passwordInputEl, "P4ssword");
+      userEvent.type(passwordRepeatInputEl, "P4ssword");
+
+      const signUpFormEl = screen.queryByTestId("sign-up-form");
+
+      userEvent.click(ukrainianToggleEl);
+      userEvent.click(signUpBtnEl);
+
+      await waitForElementToBeRemoved(signUpFormEl);
+
+      expect(acceptLanguageHeader).toBe("ua");
+    });
   });
 });
