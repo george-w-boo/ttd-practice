@@ -22,12 +22,12 @@ const ActivationPage = ({ testToken = null }) => {
         setIsLoading(true);
         const response = await activate(token);
 
-        if (response.status === 400) {
-          setError({ message: response });
+        if (response.data.message === "Account is activated") {
+          setResult("success");
           return;
         }
 
-        setResult("success");
+        setError({ message: response });
       } catch (error) {
         setError(error);
       } finally {
