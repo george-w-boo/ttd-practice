@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { withTranslation } from "react-i18next";
 
-import Input from "../components/Input";
 import i18n from "../locale/i18n";
 import testIDs from "../test-ids.json";
-
 import { signup } from "../api/apiCalls";
+
+import Input from "../components/Input";
+import Alert from "../components/Alert";
 
 function SignUpPage({ t }) {
   const [username, setUsername] = useState("");
@@ -72,7 +73,7 @@ function SignUpPage({ t }) {
   return (
     <div className="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
       {!signUpSuccess && (
-        <form className="card mt-5" data-testid={testIDs.signUpPage}>
+        <form className="card" data-testid={testIDs.signUpPage}>
           <div className="card-header">
             <h1 className="text-center">{t("signUp")}</h1>
           </div>
@@ -133,9 +134,7 @@ function SignUpPage({ t }) {
         </form>
       )}
       {signUpSuccess && (
-        <div className="alert alert-success mt-3" role="alert">
-          Please, check you email!
-        </div>
+        <Alert type="success" textContent="Please, check you email!" />
       )}
     </div>
   );

@@ -6,6 +6,23 @@ import testIDs from "./test-ids.json";
 
 import App from "./App";
 
+import { setupServer } from "msw/node";
+import { rest } from "msw";
+
+const server = setupServer(
+  rest.post("/api/1.0/users/token/:token", async (req, res, ctx) => {
+    return res(ctx.status(200));
+  })
+);
+
+beforeAll(() => server.listen());
+
+beforeEach(() => {
+  server.resetHandlers();
+});
+
+afterAll(() => server.close());
+
 describe("App", () => {
   describe("App routing", () => {
     const setup = (path) => {
@@ -25,11 +42,12 @@ describe("App", () => {
     });
 
     it.each`
-      page            | path                   | testId
-      ${"HomePage"}   | ${"/"}                 | ${testIDs.homePage}
-      ${"SignUpPage"} | ${"/signup"}           | ${testIDs.signUpPage}
-      ${"LoginPage"}  | ${"/login"}            | ${testIDs.loginPage}
-      ${"UserPage"}   | ${"/user/random-user"} | ${testIDs.userPage + "-random-user"}
+      page                | path                   | testId
+      ${"HomePage"}       | ${"/"}                 | ${testIDs.homePage}
+      ${"SignUpPage"}     | ${"/signup"}           | ${testIDs.signUpPage}
+      ${"LoginPage"}      | ${"/login"}            | ${testIDs.loginPage}
+      ${"UserPage"}       | ${"/user/random-user"} | ${testIDs.userPage + "-random-user"}
+      ${"ActivationPage"} | ${"/activation/token"} | ${testIDs.activationPage + "-token"}
     `("renders $page at $path", ({ _, path, testId }) => {
       setup(path);
 
@@ -39,19 +57,27 @@ describe("App", () => {
     });
 
     it.each`
-      page           | path                   | testId
-      ${"HomePage"}  | ${"/signup"}           | ${testIDs.homePage}
-      ${"HomePage"}  | ${"/login"}            | ${testIDs.homePage}
-      ${"HomePage"}  | ${"/user/random-user"} | ${testIDs.homePage}
-      ${"SignPage"}  | ${"/"}                 | ${testIDs.signUpPage}
-      ${"SignPage"}  | ${"/login"}            | ${testIDs.signUpPage}
-      ${"SignPage"}  | ${"/user/random-user"} | ${testIDs.signUpPage}
-      ${"LoginPage"} | ${"/"}                 | ${testIDs.loginPage}
-      ${"LoginPage"} | ${"/signup"}           | ${testIDs.loginPage}
-      ${"LoginPage"} | ${"/user/random-user"} | ${testIDs.loginPage}
-      ${"UserPage"}  | ${"/"}                 | ${testIDs.userPage + "-random-user"}
-      ${"UserPage"}  | ${"/signup"}           | ${testIDs.userPage + "-random-user"}
-      ${"UserPage"}  | ${"/login"}            | ${testIDs.userPage + "-random-user"}
+      page                | path                   | testId
+      ${"HomePage"}       | ${"/signup"}           | ${testIDs.homePage}
+      ${"HomePage"}       | ${"/login"}            | ${testIDs.homePage}
+      ${"HomePage"}       | ${"/user/random-user"} | ${testIDs.homePage}
+      ${"HomePage"}       | ${"/activation/token"} | ${testIDs.homePage}
+      ${"SignPage"}       | ${"/"}                 | ${testIDs.signUpPage}
+      ${"SignPage"}       | ${"/login"}            | ${testIDs.signUpPage}
+      ${"SignPage"}       | ${"/user/random-user"} | ${testIDs.signUpPage}
+      ${"SignPage"}       | ${"/activation/token"} | ${testIDs.signUpPage}
+      ${"LoginPage"}      | ${"/"}                 | ${testIDs.loginPage}
+      ${"LoginPage"}      | ${"/signup"}           | ${testIDs.loginPage}
+      ${"LoginPage"}      | ${"/user/random-user"} | ${testIDs.loginPage}
+      ${"LoginPage"}      | ${"/activation/token"} | ${testIDs.loginPage}
+      ${"UserPage"}       | ${"/"}                 | ${testIDs.userPage + "-random-user"}
+      ${"UserPage"}       | ${"/signup"}           | ${testIDs.userPage + "-random-user"}
+      ${"UserPage"}       | ${"/login"}            | ${testIDs.userPage + "-random-user"}
+      ${"UserPage"}       | ${"/activation/token"} | ${testIDs.userPage + "-random-user"}
+      ${"ActivationPage"} | ${"/"}                 | ${testIDs.activationPage + "-token"}
+      ${"ActivationPage"} | ${"/signup"}           | ${testIDs.activationPage + "-token"}
+      ${"ActivationPage"} | ${"/login"}            | ${testIDs.activationPage + "-token"}
+      ${"ActivationPage"} | ${"/user/random-user"} | ${testIDs.activationPage + "-token"}
     `("does not render $page at $path", ({ _, path, testId }) => {
       setup(path);
 
