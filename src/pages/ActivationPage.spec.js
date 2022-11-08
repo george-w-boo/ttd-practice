@@ -10,16 +10,13 @@ let counter = 0;
 
 const server = setupServer(
   rest.post("/api/1.0/users/token/:token", async (req, res, ctx) => {
-    console.log("counter", counter);
     counter += 1;
-    console.log("res(ctx.status(200)", res(ctx.status(200)));
+
     if (req.params.token === "fakeToken") {
-      // console.log("res(ctx.status(400)", res(ctx.status(400)));
       return res(ctx.status(400));
     }
 
-    console.log("counter", counter);
-    return res(ctx.status(200));
+    return res(ctx.status(200), ctx.json({ message: "Account is activated" }));
   })
 );
 
