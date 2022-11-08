@@ -1,16 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import { RouterProvider } from "react-router-dom";
+
 import reportWebVitals from "./reportWebVitals";
+
 import "./locale/i18n";
-import { BrowserRouter } from "react-router-dom";
+import { browserRouter } from "./routers";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <RouterProvider router={browserRouter} />
   </React.StrictMode>
 );
 
