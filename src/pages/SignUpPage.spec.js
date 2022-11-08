@@ -8,13 +8,15 @@ import userEvent from "@testing-library/user-event";
 // import axios from "axios";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
+import { act } from "react-dom/test-utils";
 
 import i18n from "../locale/i18n";
 import en from "../locale/en.json";
 import ua from "../locale/ua.json";
+import testIDs from "../test-ids.json";
+
 import SignUpPage from "./SignUpPage";
 import LanguageSelector from "../components/LanguageSelector";
-import { act } from "react-dom/test-utils";
 
 let requestBody;
 let counter = 0;
@@ -213,7 +215,7 @@ describe("SignUpPage", () => {
     it("hides sign-up form upon successful api call", async () => {
       setup();
 
-      const formEl = screen.getByTestId("sign-up-form");
+      const formEl = screen.getByTestId(testIDs.signUpPage);
 
       userEvent.click(signUpBtnEl);
 
@@ -407,7 +409,7 @@ describe("SignUpPage", () => {
       userEvent.type(passwordInputEl, "P4ssword");
       userEvent.type(passwordRepeatInputEl, "P4ssword");
 
-      const signUpFormEl = screen.queryByTestId("sign-up-form");
+      const signUpFormEl = screen.queryByTestId(testIDs.signUpPage);
 
       userEvent.click(signUpBtnEl);
 
@@ -422,7 +424,7 @@ describe("SignUpPage", () => {
       userEvent.type(passwordInputEl, "P4ssword");
       userEvent.type(passwordRepeatInputEl, "P4ssword");
 
-      const signUpFormEl = screen.queryByTestId("sign-up-form");
+      const signUpFormEl = screen.queryByTestId(testIDs.signUpPage);
 
       userEvent.click(ukrainianToggleEl);
       userEvent.click(signUpBtnEl);
