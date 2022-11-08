@@ -6,6 +6,23 @@ import testIDs from "./test-ids.json";
 
 import App from "./App";
 
+import { setupServer } from "msw/node";
+import { rest } from "msw";
+
+const server = setupServer(
+  rest.post("/api/1.0/users/token/:token", async (req, res, ctx) => {
+    return res(ctx.status(200));
+  })
+);
+
+beforeAll(() => server.listen());
+
+beforeEach(() => {
+  server.resetHandlers();
+});
+
+afterAll(() => server.close());
+
 describe("App", () => {
   describe("App routing", () => {
     const setup = (path) => {
