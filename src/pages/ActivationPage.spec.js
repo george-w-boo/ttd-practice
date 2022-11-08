@@ -78,4 +78,36 @@ describe("ActivationPage", () => {
 
     expect(counter).toBe(2);
   });
+
+  it("renders spinner during an ongoing activation api call", async () => {
+    setup("successToken");
+
+    const spinnerEl = screen.queryByRole("status");
+
+    expect(spinnerEl).toBeInTheDocument();
+
+    await screen.findByText("Account is activated");
+
+    expect(spinnerEl).not.toBeInTheDocument();
+  });
+
+  it("renders spinner after second api call to the changed token", async () => {
+    const { rerender } = render(<ActivationPage testToken="successToken" />);
+
+    let spinnerEl = screen.queryByRole("status");
+    expect(spinnerEl).toBeInTheDocument();
+
+    await screen.findByText("Account is activated");
+
+    expect(spinnerEl).not.toBeInTheDocument();
+
+    rerender(<ActivationPage testToken="fakeToken" />);
+
+    spinnerEl = screen.queryByRole("status");
+    expect(spinnerEl).toBeInTheDocument();
+
+    await screen.findByText(/error/i);
+
+    expect(spinnerEl).not.toBeInTheDocument();
+  });
 });

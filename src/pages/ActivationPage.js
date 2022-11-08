@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 import { activate } from "../api/apiCalls";
 import testIDs from "../test-ids.json";
 
+import Alert from "../components/Alert";
+
 const ActivationPage = ({ testToken = null }) => {
   const [result, setResult] = useState();
   const [isLoading, setIsLoading] = useState(false);
@@ -40,11 +42,9 @@ const ActivationPage = ({ testToken = null }) => {
       style={{ display: "flex", justifyContent: "center" }}
     >
       {result === "success" && (
-        <div className="alert alert-success mt-3">Account is activated</div>
+        <Alert type="success" textContent="Account is activated" />
       )}
-      {error && (
-        <div className="alert alert-danger mt-3">Error: {error.message}</div>
-      )}
+      {error && <Alert type="danger" textContent={`Error: ${error.message}`} />}
       {isLoading && (
         <div className="d-flex justify-content-center">
           <div className="spinner-border" role="status">
