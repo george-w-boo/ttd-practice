@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { activate } from "../api/apiCalls";
 
+import { activate } from "../api/apiCalls";
 import testIDs from "../test-ids.json";
 
-const ActivationPage = () => {
+const ActivationPage = ({ testToken = null }) => {
   const [result, setResult] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
+  const [error, setError] = useState(null);
 
-  const { token } = useParams();
+  let { token } = useParams();
+
+  if (testToken) token = testToken;
 
   useEffect(() => {
     (async () => {
+      setError(null);
       try {
         setIsLoading(true);
         const response = await activate(token);
@@ -24,13 +27,12 @@ const ActivationPage = () => {
 
         setResult("success");
       } catch (error) {
-        // console.log("error", error);
         setError(error);
       } finally {
         setIsLoading(false);
       }
     })();
-  }, []);
+  }, [token]);
 
   return (
     <div

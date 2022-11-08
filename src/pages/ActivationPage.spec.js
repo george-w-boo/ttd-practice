@@ -10,12 +10,15 @@ let counter = 0;
 
 const server = setupServer(
   rest.post("/api/1.0/users/token/:token", async (req, res, ctx) => {
+    console.log("counter", counter);
+    counter += 1;
+    console.log("res(ctx.status(200)", res(ctx.status(200)));
     if (req.params.token === "fakeToken") {
+      // console.log("res(ctx.status(400)", res(ctx.status(400)));
       return res(ctx.status(400));
     }
 
-    counter += 1;
-
+    console.log("counter", counter);
     return res(ctx.status(200));
   })
 );
@@ -62,5 +65,17 @@ describe("ActivationPage", () => {
     const alertEl = await screen.findByText("Error", { exact: false });
 
     expect(alertEl).toBeInTheDocument();
+  });
+
+  it("sends activation request after token has been changed", async () => {
+    const { rerender } = render(<ActivationPage testToken="successToken" />);
+
+    await screen.findByText("Account is activated");
+
+    rerender(<ActivationPage testToken="fakeToken" />);
+
+    await screen.findByText(/error/i);
+
+    expect(counter).toBe(2);
   });
 });
