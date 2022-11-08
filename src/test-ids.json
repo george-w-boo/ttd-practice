@@ -2,5 +2,6 @@
   "homePage": "home-page",
   "signUpPage": "sign-up-form",
   "loginPage": "login-page",
-  "userPage": "user-page"
+  "userPage": "user-page",
+  "activationPage": "activation-page"
 }
