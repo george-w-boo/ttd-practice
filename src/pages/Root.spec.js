@@ -1,13 +1,14 @@
 import { render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
-import testIDs from "./test-ids.json";
+import testIDs from "../test-ids.json";
 
-import App from "./App";
+import Root from "./Root";
 
 import { setupServer } from "msw/node";
 import { rest } from "msw";
+import { memoryRouter } from "../routers";
 
 const server = setupServer(
   rest.post("/api/1.0/users/token/:token", async (req, res, ctx) => {
@@ -26,11 +27,7 @@ afterAll(() => server.close());
 describe("App", () => {
   describe("App routing", () => {
     const setup = (path) => {
-      render(
-        <MemoryRouter initialEntries={[path]}>
-          <App />
-        </MemoryRouter>
-      );
+      render(<RouterProvider router={memoryRouter(path)} />);
     };
 
     it("does not render HomePage at /signup", () => {
