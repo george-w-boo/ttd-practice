@@ -1,5 +1,4 @@
 import axios from "axios";
-import { json } from "react-router-dom";
 
 export const signup = (body, language) => {
   return axios.post("/api/1.0/users", body, {
@@ -13,14 +12,26 @@ export const activate = (token) => {
   return axios.post("/api/1.0/users/token/" + token);
 };
 
-export const getUsers = async () => {
+export const getUsersAxios = async () => {
   const response = await axios.get(
     "https://dummyjson.com/users?limit=100&skip=10&select=firstName,age"
   );
 
-  if (response.statusText === "OK") {
-    return response.data;
+  if (response.statusText !== "OK") {
+    throw { message: "Failed to fetch users", status: 500 };
   }
 
-  throw response;
+  return response;
 };
+
+export async function getUsersFetch() {
+  const response = await fetch(
+    "https://dummyjson.com/users?limit=100&skip=10&select=firstName,age"
+  );
+
+  if (!response.ok) {
+    throw { message: "Failed to fetch users", status: 500 };
+  }
+
+  return response.json();
+}

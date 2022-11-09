@@ -13,17 +13,15 @@ import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import UserPage from "./pages/UserPage";
 import ActivationPage from "./pages/ActivationPage";
-import HomePage from "./pages/HomePage";
+import HomePage, { loader as usersLoader } from "./pages/HomePage";
 import Alert from "./components/Alert";
-
-import { getUsers } from "./api/apiCalls";
 
 const routes = (
   <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
     <Route
       index
       path="/"
-      loader={getUsers}
+      loader={usersLoader}
       element={<HomePage />}
       errorElement={<ErrorBoundary />}
     />
@@ -47,17 +45,17 @@ function ErrorBoundary() {
   let error = useRouteError();
   console.error(error);
 
-  if (error.response.responseText) {
+  if (error.response?.responseText) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
     return <Alert type="danger" textContent={error.response.responseText} />;
   }
 
-  if (error.request.responseText) {
+  if (error.request?.responseText) {
     // The request was made but no response was received
     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
     // http.ClientRequest in node.js
-    return <Alert type="danger" textContent={error.request.responseText} />;
+    return <Alert type="danger" textContent={error.request?.responseText} />;
   }
 
   // Something happened in setting up the request that triggered an Error

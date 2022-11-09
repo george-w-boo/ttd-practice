@@ -3,21 +3,28 @@ import { Await, useLoaderData } from "react-router-dom";
 import Spinner from "./Spinner";
 
 const UserList = () => {
-  const { users } = useLoaderData();
+  const data = useLoaderData();
 
-  console.log("result", users);
+  console.log("result", data);
 
   return (
     <div className="card">
       <div className="card-header text-center">
         <h3>Users</h3>
-        <React.Suspense fallback={<Spinner />}>
-          <Await
-            resolve={users}
-            errorElement={<div>Couldn't load users</div>}
-            children={(resolvedUsers) => (
-              <ul className="list-group">
-                {resolvedUsers.map((user, i) => (
+        <ul className="list-group">
+          <React.Suspense
+            fallback={
+              <div className="d-flex justify-content-center">
+                <Spinner />
+              </div>
+            }
+          >
+            <Await
+              resolve={data.data}
+              errorElement={<div>Couldn't load users</div>}
+            >
+              {({ users }) =>
+                users?.map((user, i) => (
                   <li
                     key={user.id}
                     className="list-group-item d-flex justify-content-between align-items-center"
@@ -30,11 +37,11 @@ const UserList = () => {
                       See User
                     </button>
                   </li>
-                ))}
-              </ul>
-            )}
-          />
-        </React.Suspense>
+                ))
+              }
+            </Await>
+          </React.Suspense>
+        </ul>
       </div>
     </div>
   );
