@@ -3,6 +3,7 @@ import {
   createMemoryRouter,
   createRoutesFromElements,
   Route,
+  useRouteError,
 } from "react-router-dom";
 
 import ErrorPage from "./ErrorPage";
@@ -13,10 +14,19 @@ import LoginPage from "./pages/LoginPage";
 import UserPage from "./pages/UserPage";
 import ActivationPage from "./pages/ActivationPage";
 import HomePage from "./pages/HomePage";
+import Alert from "./components/Alert";
+
+import { getUsers } from "./api/apiCalls";
 
 const routes = (
   <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
-    <Route index path="/" element={<HomePage />} />
+    <Route
+      index
+      path="/"
+      loader={getUsers}
+      element={<HomePage />}
+      errorElement={<ErrorBoundary />}
+    />
     <Route path="signup" element={<SignUpPage />} />
     <Route path="login" element={<LoginPage />} />
     <Route path="user/:userId" element={<UserPage />} />
@@ -32,3 +42,24 @@ export const memoryRouter = (initialPath) =>
   createMemoryRouter(createRoutesFromElements(routes), {
     initialEntries: [initialPath],
   });
+
+function ErrorBoundary() {
+  let error = useRouteError();
+  console.error(error);
+
+  if (error.response.responseText) {
+    // The request was made and the server responded with a status code
+    // that falls out of the range of 2xx
+    return <Alert type="danger" textContent={error.response.responseText} />;
+  }
+
+  if (error.request.responseText) {
+    // The request was made but no response was received
+    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+    // http.ClientRequest in node.js
+    return <Alert type="danger" textContent={error.request.responseText} />;
+  }
+
+  // Something happened in setting up the request that triggered an Error
+  return <Alert type="danger" textContent={error.message} />;
+}
