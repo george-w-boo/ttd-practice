@@ -14,30 +14,21 @@ import UserPage from "./pages/UserPage";
 import ActivationPage from "./pages/ActivationPage";
 import HomePage from "./pages/HomePage";
 
+const routes = (
+  <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
+    <Route index path="/" element={<HomePage />} />
+    <Route path="signup" element={<SignUpPage />} />
+    <Route path="login" element={<LoginPage />} />
+    <Route path="user/:userId" element={<UserPage />} />
+    <Route path="activation/:token" element={<ActivationPage />} />
+  </Route>
+);
+
 export const browserRouter = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
-      <Route index path="/" element={<HomePage />} />
-      <Route path="signup" element={<SignUpPage />} />
-      <Route path="login" element={<LoginPage />} />
-      <Route path="user/:userId" element={<UserPage />} />
-      <Route path="activation/:token" element={<ActivationPage />} />
-    </Route>
-  )
+  createRoutesFromElements(routes)
 );
 
 export const memoryRouter = (initialPath) =>
-  createMemoryRouter(
-    createRoutesFromElements(
-      <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
-        <Route index path="/" element={<HomePage />} />
-        <Route path="signup" element={<SignUpPage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="user/:userId" element={<UserPage />} />
-        <Route path="activation/:token" element={<ActivationPage />} />
-      </Route>
-    ),
-    {
-      initialEntries: [initialPath],
-    }
-  );
+  createMemoryRouter(createRoutesFromElements(routes), {
+    initialEntries: [initialPath],
+  });
