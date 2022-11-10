@@ -1,11 +1,10 @@
 import React from "react";
 import { Await, useLoaderData } from "react-router-dom";
 import Spinner from "./Spinner";
+import Alert from "./Alert";
 
 const UserList = () => {
-  const data = useLoaderData();
-
-  console.log("result", data);
+  const getUsersResponse = useLoaderData();
 
   return (
     <div className="card">
@@ -19,10 +18,7 @@ const UserList = () => {
               </div>
             }
           >
-            <Await
-              resolve={data.data}
-              errorElement={<div>Couldn't load users</div>}
-            >
+            <Await resolve={getUsersResponse.data} errorElement={<Alert />}>
               {({ users }) =>
                 users?.map((user, i) => (
                   <li
