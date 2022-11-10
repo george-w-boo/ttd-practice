@@ -22,8 +22,8 @@ const UserList = () => {
               resolve={getUsersResponseDeffered.axiosResponse}
               errorElement={<Alert />}
             >
-              {({ data }) => {
-                return data.users?.map((user, i) => (
+              {(axiosResponse) => {
+                return axiosResponse.data.users?.map((user, i) => (
                   <li
                     key={user.id}
                     className="list-group-item d-flex justify-content-between align-items-center"

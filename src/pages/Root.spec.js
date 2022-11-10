@@ -1,10 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import { createMemoryRouter, RouterProvider } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
 import testIDs from "../test-ids.json";
-
-import Root from "./Root";
 
 import { setupServer } from "msw/node";
 import { rest } from "msw";
@@ -13,6 +11,20 @@ import { memoryRouter } from "../routers";
 const server = setupServer(
   rest.post("/api/1.0/users/token/:token", async (req, res, ctx) => {
     return res(ctx.status(200));
+  }),
+  rest.get("https://dummyjson.com/users", async (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        data: {
+          users: [
+            { id: 11, firstName: "Marcel", age: 39 },
+            { id: 12, firstName: "Assunta", age: 42 },
+            { id: 13, firstName: "Trace", age: 26 },
+          ],
+        },
+      })
+    );
   })
 );
 
@@ -30,14 +42,6 @@ describe("App", () => {
       render(<RouterProvider router={memoryRouter(path)} />);
     };
 
-    it("does not render HomePage at /signup", () => {
-      setup("/signup");
-
-      const homePageEl = screen.queryByTestId(testIDs.homePage);
-
-      expect(homePageEl).not.toBeInTheDocument();
-    });
-
     it.each`
       page                | path                   | testId
       ${"HomePage"}       | ${"/"}                 | ${testIDs.homePage}
@@ -45,10 +49,10 @@ describe("App", () => {
       ${"LoginPage"}      | ${"/login"}            | ${testIDs.loginPage}
       ${"UserPage"}       | ${"/user/random-user"} | ${testIDs.userPage + "-random-user"}
       ${"ActivationPage"} | ${"/activation/token"} | ${testIDs.activationPage + "-token"}
-    `("renders $page at $path", ({ _, path, testId }) => {
+    `("renders $page at $path", async ({ _, path, testId }) => {
       setup(path);
 
-      const pageEl = screen.getByTestId(testId);
+      const pageEl = await screen.findByTestId(testId);
 
       expect(pageEl).toBeInTheDocument();
     });
@@ -75,7 +79,7 @@ describe("App", () => {
       ${"ActivationPage"} | ${"/signup"}           | ${testIDs.activationPage + "-token"}
       ${"ActivationPage"} | ${"/login"}            | ${testIDs.activationPage + "-token"}
       ${"ActivationPage"} | ${"/user/random-user"} | ${testIDs.activationPage + "-token"}
-    `("does not render $page at $path", ({ _, path, testId }) => {
+    `("does not render $page at $path", async ({ _, path, testId }) => {
       setup(path);
 
       const homePageEl = screen.queryByTestId(testId);
@@ -90,14 +94,14 @@ describe("App", () => {
       ${"LoginPage"}  | ${"/signup"} | ${"Login"}  | ${testIDs.loginPage}
     `(
       "leads to $targetPage upon clicking navLink $name",
-      ({ _, path, name, testId }) => {
+      async ({ _, path, name, testId }) => {
         setup(path);
 
-        const linkEl = screen.getByRole("link", { name });
+        const linkEl = await screen.findByRole("link", { name });
 
         userEvent.click(linkEl);
 
-        const targetPageEl = screen.queryByTestId(testId);
+        const targetPageEl = await screen.findByTestId(testId);
 
         expect(targetPageEl).toBeInTheDocument();
       }

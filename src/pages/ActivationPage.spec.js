@@ -1,10 +1,11 @@
 import { render, screen } from "@testing-library/react";
-import { MemoryRouter, Routes, Route } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
 
 import ActivationPage from "./ActivationPage";
+import { memoryRouter } from "../routers";
 
 let counter = 0;
 
@@ -31,13 +32,7 @@ afterAll(() => server.close());
 
 describe("ActivationPage", () => {
   const setup = (token) => {
-    render(
-      <MemoryRouter initialEntries={[`/activation/${token}`]}>
-        <Routes>
-          <Route path="/activation/:token" element={<ActivationPage />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    render(<RouterProvider router={memoryRouter(`/activation/${token}`)} />);
   };
 
   it("renders activation success alert if token is valid", async () => {
