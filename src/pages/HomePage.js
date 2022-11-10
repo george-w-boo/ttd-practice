@@ -1,6 +1,6 @@
 import React from "react";
 import { defer } from "react-router-dom";
-import { getUsersFetch } from "../api/apiCalls";
+import { getUsersAxios, getUsersFetch } from "../api/apiCalls";
 import UserList from "../components/UserList";
 import testIDs from "../test-ids.json";
 
@@ -15,5 +15,5 @@ const HomePage = () => {
 export default HomePage;
 
 export function loader() {
-  return defer({ data: getUsersFetch() });
+  return defer({ axiosResponse: getUsersAxios() });
 }
