@@ -2,7 +2,6 @@ import {
   createBrowserRouter,
   createMemoryRouter,
   createRoutesFromElements,
-  defer,
   Route,
   useRouteError,
 } from "react-router-dom";
@@ -17,8 +16,8 @@ import ActivationPage from "./pages/ActivationPage";
 import HomePage, { loader as usersLoader } from "./pages/HomePage";
 import Alert from "./components/Alert";
 
-const routes = (
-  <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
+const subRoutes = (
+  <>
     <Route
       index
       path="/"
@@ -30,6 +29,12 @@ const routes = (
     <Route path="login" element={<LoginPage />} />
     <Route path="user/:userId" element={<UserPage />} />
     <Route path="activation/:token" element={<ActivationPage />} />
+  </>
+);
+
+const routes = (
+  <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
+    {subRoutes}
   </Route>
 );
 
@@ -37,12 +42,12 @@ export const browserRouter = createBrowserRouter(
   createRoutesFromElements(routes)
 );
 
-export const memoryRouter = (initialPath) =>
-  createMemoryRouter(createRoutesFromElements(routes), {
+export const memoryRouter = (initialPath, customRoutes = routes) =>
+  createMemoryRouter(createRoutesFromElements(customRoutes), {
     initialEntries: [initialPath],
   });
 
-function ErrorBoundary() {
+export function ErrorBoundary() {
   let error = useRouteError();
   console.error(error);
 

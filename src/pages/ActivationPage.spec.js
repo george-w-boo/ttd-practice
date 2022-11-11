@@ -1,6 +1,5 @@
 import { render, screen } from "@testing-library/react";
 import { RouterProvider } from "react-router-dom";
-import userEvent from "@testing-library/user-event";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
 

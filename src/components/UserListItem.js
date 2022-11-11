@@ -7,9 +7,6 @@ const UserListItem = ({ user }) => {
         <span className="fw-bold">{user.firstName}</span>
         {user.email}
       </div>
-      <button type="button" className="btn btn-primary">
-        See User
-      </button>
     </li>
   );
 };
