@@ -14,7 +14,7 @@ export const activate = (token) => {
 
 export const getUsersAxios = async () => {
   const response = await axios.get(
-    "https://dummyjson.com/users?limit=100&skip=10&select=firstName,age"
+    "https://dummyjson.com/users?limit=20&skip=10&select=firstName,email,image"
   );
 
   if (response.statusText !== "OK") {
