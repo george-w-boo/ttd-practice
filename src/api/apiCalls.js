@@ -13,7 +13,9 @@ export const activate = (token) => {
 };
 
 export const getUsers = async () => {
-  const response = await axios.get("/api/1.0/users");
+  const response = await axios.get("/api/1.0/users", {
+    params: { page: 0, size: 3 },
+  });
 
   if (response.statusText !== "OK") {
     throw { message: "Failed to fetch users", status: 500 };
