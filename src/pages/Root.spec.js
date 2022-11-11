@@ -12,17 +12,15 @@ const server = setupServer(
   rest.post("/api/1.0/users/token/:token", async (req, res, ctx) => {
     return res(ctx.status(200));
   }),
-  rest.get("https://dummyjson.com/users", async (req, res, ctx) => {
+  rest.get("/api/1.0/users", async (req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json({
-        data: {
-          users: [
-            { id: 11, firstName: "Marcel", age: 39 },
-            { id: 12, firstName: "Assunta", age: 42 },
-            { id: 13, firstName: "Trace", age: 26 },
-          ],
-        },
+        content: [
+          { id: 11, username: "Marcel", image: null },
+          { id: 12, username: "Assunta", image: null },
+          { id: 13, username: "Trace", image: null },
+        ],
       })
     );
   })
@@ -94,7 +92,7 @@ describe("App", () => {
       ${"LoginPage"}  | ${"/signup"} | ${"Login"}  | ${testIDs.loginPage}
     `(
       "leads to $targetPage upon clicking navLink $name",
-      async ({ _, path, name, testId }) => {
+      async ({ targetPage, path, name, testId }) => {
         setup(path);
 
         const linkEl = await screen.findByRole("link", { name });

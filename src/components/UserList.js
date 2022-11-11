@@ -24,8 +24,7 @@ const UserList = () => {
               errorElement={<Alert />}
             >
               {(axiosResponse) => {
-                console.log("axiosResponse", axiosResponse.data.users);
-                return axiosResponse.data.users?.map((user, i) => (
+                return axiosResponse.data.content?.map((user, i) => (
                   <UserListItem key={user.id} user={user} />
                 ));
               }}

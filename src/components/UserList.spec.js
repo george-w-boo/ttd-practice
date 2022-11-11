@@ -8,33 +8,33 @@ import { loader as usersLoader } from "../pages/HomePage";
 import UserList from "./UserList";
 
 const page1 = {
-  users: [
+  content: [
     {
       id: 1,
-      firstName: "FakeUser1",
+      username: "FakeUser1",
       email: "atuny0@sohu.com",
       image: "https://robohash.org/hicveldicta.png",
     },
     {
       id: 2,
-      firstName: "FakeUser2",
+      username: "FakeUser2",
       email: "hbingley1@plala.or.jp",
       image: "https://robohash.org/doloremquesintcorrupti.png",
     },
     {
       id: 3,
-      firstName: "FakeUser3",
+      username: "FakeUser3",
       email: "rshawe2@51.la",
       image: "https://robohash.org/consequunturautconsequatur.png",
     },
   ],
-  total: 100,
-  skip: 0,
-  limit: 3,
+  page: 0,
+  size: 10,
+  totalPages: 3,
 };
 
 const server = setupServer(
-  rest.get("https://dummyjson.com/users", async (req, res, ctx) => {
+  rest.get("/api/1.0/users", async (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(page1));
   })
 );

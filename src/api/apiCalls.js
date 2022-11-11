@@ -12,6 +12,16 @@ export const activate = (token) => {
   return axios.post("/api/1.0/users/token/" + token);
 };
 
+export const getUsers = async () => {
+  const response = await axios.get("/api/1.0/users");
+
+  if (response.statusText !== "OK") {
+    throw { message: "Failed to fetch users", status: 500 };
+  }
+
+  return response;
+};
+
 export const getUsersAxios = async () => {
   const response = await axios.get(
     "https://dummyjson.com/users?limit=20&skip=10&select=firstName,email,image"
