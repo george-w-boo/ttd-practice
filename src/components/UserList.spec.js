@@ -135,4 +135,43 @@ describe("UserList", () => {
 
     expect(fakeUser4Node).toBeInTheDocument();
   });
+
+  it("disables next btn at last page", async () => {
+    setup();
+
+    await screen.findByText(/FakeUser1/i);
+    const linkNextNode = screen.queryByText(/next >/i);
+
+    userEvent.click(linkNextNode);
+    userEvent.click(linkNextNode);
+
+    expect(linkNextNode).toBeDisabled();
+  });
+
+  it("initially btn previous is disabled", async () => {
+    setup();
+
+    await screen.findByText(/FakeUser1/i);
+    const linkPrevNode = screen.queryByText(/< previous/i);
+
+    expect(linkPrevNode).toBeDisabled();
+  });
+
+  it("checks if btn previosu works properly", async () => {
+    setup();
+
+    await screen.findByText(/FakeUser1/i);
+    const linkNextNode = screen.queryByText(/next >/i);
+
+    userEvent.click(linkNextNode);
+
+    await screen.findByText(/FakeUser4/i);
+    const linkPrevNode = screen.queryByText(/< previous/i);
+
+    userEvent.click(linkPrevNode);
+
+    const fakeUser1Node = await screen.findByText(/FakeUser1/i);
+
+    expect(fakeUser1Node).toBeInTheDocument();
+  });
 });

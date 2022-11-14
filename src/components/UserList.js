@@ -31,9 +31,21 @@ const UserList = () => {
     })();
   }, [page, size]);
 
-  const onClickNextHandler = async () => {
+  const onClickNextHandler = (event) => {
+    event.preventDefault();
     setPage((latestState) => ({ ...latestState, page: latestState.page + 1 }));
   };
+
+  const onClickPreviousHandler = (event) => {
+    event.preventDefault();
+    setPage((latestState) => ({ ...latestState, page: latestState.page - 1 }));
+  };
+
+  const onClickDigitHandler = (event) => {
+    const {} = event.t;
+  };
+
+  console.log("page", page);
 
   return (
     <div className="card">
@@ -49,12 +61,33 @@ const UserList = () => {
           )}
         </ul>
       </div>
-      <button
-        onClick={onClickNextHandler}
-        disabled={content.length < size ? true : false}
-      >
-        Next &gt;
-      </button>
+      <div className="card-footer">
+        <nav aria-label="users pagination">
+          <ul class="pagination">
+            <li class={`page-item ${page === 0 ? "disabled" : ""}`}>
+              <a class="page-link" href="/" onClick={onClickPreviousHandler}>
+                &lt; Previous
+              </a>
+            </li>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <li class="page-item" key={i}>
+                <a class="page-link" href="/">
+                  {i + 1}
+                </a>
+              </li>
+            ))}
+            <button
+              class={`page-item ${
+                page && page === totalPages - 1 ? "disabled" : ""
+              }`}
+            >
+              <a class="page-link" href="/" onClick={onClickNextHandler}>
+                Next &gt;
+              </a>
+            </button>
+          </ul>
+        </nav>
+      </div>
     </div>
   );
 };
