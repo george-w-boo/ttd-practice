@@ -1,10 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import { RouterProvider, Route } from "react-router-dom";
+import userEvent from "@testing-library/user-event";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
 
 import { memoryRouter, ErrorBoundary } from "../routers";
-import { loader as usersLoader } from "../pages/HomePage";
+
 import UserList from "./UserList";
 
 const users = [
@@ -106,7 +107,6 @@ describe("UserList", () => {
           <Route
             index
             path="/"
-            loader={usersLoader}
             element={<UserList />}
             errorElement={<ErrorBoundary />}
           />
@@ -121,5 +121,18 @@ describe("UserList", () => {
     const listItemNodes = await screen.findAllByText(/fakeuser/i);
 
     expect(listItemNodes.length).toBe(3);
+  });
+
+  it("renders next page after clicking link next", async () => {
+    setup();
+
+    await screen.findByText(/FakeUser1/i);
+    const linkNextNode = screen.queryByText(/next >/i);
+
+    userEvent.click(linkNextNode);
+
+    const fakeUser4Node = await screen.findByText(/fakeuser4/i);
+
+    expect(fakeUser4Node).toBeInTheDocument();
   });
 });

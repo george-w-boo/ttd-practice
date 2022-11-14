@@ -13,7 +13,7 @@ import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import UserPage from "./pages/UserPage";
 import ActivationPage from "./pages/ActivationPage";
-import HomePage, { loader as usersLoader } from "./pages/HomePage";
+import HomePage from "./pages/HomePage";
 import Alert from "./components/Alert";
 
 const subRoutes = (
@@ -21,7 +21,6 @@ const subRoutes = (
     <Route
       index
       path="/"
-      loader={usersLoader}
       element={<HomePage />}
       errorElement={<ErrorBoundary />}
     />

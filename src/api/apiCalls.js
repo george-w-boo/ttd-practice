@@ -12,9 +12,9 @@ export const activate = (token) => {
   return axios.post("/api/1.0/users/token/" + token);
 };
 
-export const getUsers = async () => {
+export const getUsers = async (page, size) => {
   const response = await axios.get("/api/1.0/users", {
-    params: { page: 0, size: 3 },
+    params: { page, size },
   });
 
   if (response.statusText !== "OK") {
@@ -23,27 +23,3 @@ export const getUsers = async () => {
 
   return response;
 };
-
-export const getUsersAxios = async () => {
-  const response = await axios.get(
-    "https://dummyjson.com/users?limit=20&skip=10&select=firstName,email,image"
-  );
-
-  if (response.statusText !== "OK") {
-    throw { message: "Failed to fetch users", status: 500 };
-  }
-
-  return response;
-};
-
-export async function getUsersFetch() {
-  const response = await fetch(
-    "https://dummyjson.com/users?limit=100&skip=10&select=firstName,age"
-  );
-
-  if (!response.ok) {
-    throw { message: "Failed to fetch users", status: 500 };
-  }
-
-  return response.json();
-}
