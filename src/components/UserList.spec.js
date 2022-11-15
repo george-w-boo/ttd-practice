@@ -145,16 +145,17 @@ describe("UserList", () => {
     userEvent.click(linkNextNode);
     userEvent.click(linkNextNode);
 
-    expect(linkNextNode).toBeDisabled();
+    const nextPageBtnNode = screen.queryByTestId("next-page-btn");
+    expect(nextPageBtnNode).toHaveClass("disabled");
   });
 
   it("initially btn previous is disabled", async () => {
     setup();
 
     await screen.findByText(/FakeUser1/i);
-    const linkPrevNode = screen.queryByText(/< previous/i);
+    const prevBtnNode = screen.queryByTestId("prev-page-btn");
 
-    expect(linkPrevNode).toBeDisabled();
+    expect(prevBtnNode).toHaveClass("disabled");
   });
 
   it("checks if btn previosu works properly", async () => {
@@ -166,7 +167,7 @@ describe("UserList", () => {
     userEvent.click(linkNextNode);
 
     await screen.findByText(/FakeUser4/i);
-    const linkPrevNode = screen.queryByText(/< previous/i);
+    const linkPrevNode = screen.queryByText(/< prev/i);
 
     userEvent.click(linkPrevNode);
 

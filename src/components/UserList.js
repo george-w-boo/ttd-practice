@@ -41,12 +41,6 @@ const UserList = () => {
     setPage((latestState) => ({ ...latestState, page: latestState.page - 1 }));
   };
 
-  const onClickDigitHandler = (event) => {
-    const {} = event.t;
-  };
-
-  console.log("page", page);
-
   return (
     <div className="card">
       <div className="card-header text-center">
@@ -63,28 +57,29 @@ const UserList = () => {
       </div>
       <div className="card-footer">
         <nav aria-label="users pagination">
-          <ul class="pagination">
-            <li class={`page-item ${page === 0 ? "disabled" : ""}`}>
-              <a class="page-link" href="/" onClick={onClickPreviousHandler}>
-                &lt; Previous
+          <ul className="pagination justify-content-center mb-0">
+            <li
+              className={`page-item ${page === 0 ? "disabled" : ""}`}
+              data-testid="prev-page-btn"
+            >
+              <a
+                className="page-link"
+                href="/"
+                onClick={onClickPreviousHandler}
+              >
+                &lt; Prev
               </a>
             </li>
-            {Array.from({ length: totalPages }, (_, i) => (
-              <li class="page-item" key={i}>
-                <a class="page-link" href="/">
-                  {i + 1}
-                </a>
-              </li>
-            ))}
-            <button
-              class={`page-item ${
+            <li
+              data-testid="next-page-btn"
+              className={`page-item ${
                 page && page === totalPages - 1 ? "disabled" : ""
               }`}
             >
-              <a class="page-link" href="/" onClick={onClickNextHandler}>
+              <a className="page-link" href="/" onClick={onClickNextHandler}>
                 Next &gt;
               </a>
-            </button>
+            </li>
           </ul>
         </nav>
       </div>
