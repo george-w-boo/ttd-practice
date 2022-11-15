@@ -17,9 +17,14 @@ const server = setupServer(
       ctx.status(200),
       ctx.json({
         content: [
-          { id: 11, username: "Marcel", image: null },
-          { id: 12, username: "Assunta", image: null },
-          { id: 13, username: "Trace", image: null },
+          { id: 11, username: "Marcel", email: "marcel@test.com", image: null },
+          {
+            id: 12,
+            username: "Assunta",
+            email: "assunta@test.com",
+            image: null,
+          },
+          { id: 13, username: "Trace", email: "trace@test.com", image: null },
         ],
       })
     );
@@ -104,5 +109,17 @@ describe("App", () => {
         expect(targetPageEl).toBeInTheDocument();
       }
     );
+
+    it("checks if click on user leads to the user page", async () => {
+      setup("/");
+
+      const userNode = await screen.findByTestId(/Marcel-1/i);
+
+      userEvent.click(userNode);
+
+      const userPageNode = screen.queryByTestId(`${testIDs.userPage}-11`);
+
+      expect(userPageNode).toBeInTheDocument();
+    });
   });
 });

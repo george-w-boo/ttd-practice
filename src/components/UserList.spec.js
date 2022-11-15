@@ -149,7 +149,7 @@ describe("UserList", () => {
     expect(nextPageBtnNode).toHaveClass("disabled");
   });
 
-  it("initially btn previous is disabled", async () => {
+  it("initially btn prev is disabled", async () => {
     setup();
 
     await screen.findByText(/FakeUser1/i);
@@ -158,7 +158,7 @@ describe("UserList", () => {
     expect(prevBtnNode).toHaveClass("disabled");
   });
 
-  it("checks if btn previosu works properly", async () => {
+  it("checks if btn prev works properly", async () => {
     setup();
 
     await screen.findByText(/FakeUser1/i);
