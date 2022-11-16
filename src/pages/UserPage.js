@@ -5,6 +5,7 @@ import { getUser } from "../api/apiCalls";
 import testIDs from "../test-ids.json";
 import Spinner from "../components/Spinner";
 import Alert from "../components/Alert";
+import UserCard from "../components/UserCard";
 
 const UserPage = () => {
   const { userId } = useParams();
@@ -25,7 +26,7 @@ const UserPage = () => {
           errorElement={<Alert />}
         >
           {(getUserResponse) => {
-            return <p>{getUserResponse.data.username}</p>;
+            return <UserCard user={getUserResponse.data} />;
           }}
         </Await>
       </React.Suspense>

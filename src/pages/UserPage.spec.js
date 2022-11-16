@@ -8,13 +8,22 @@ import { memoryRouter, ErrorBoundary } from "../routers";
 
 const server = setupServer(
   rest.get("/api/1.0/users/:id", (req, res, ctx) => {
+    if (req.params.id === "1") {
+      return res(
+        ctx.status(200),
+        ctx.json({
+          id: 1,
+          username: "FakeUser1",
+          email: "user1@mail.com",
+          image: null,
+        })
+      );
+    }
+
     return res(
-      ctx.status(200),
+      ctx.status(404),
       ctx.json({
-        id: 1,
-        username: "FakeUser1",
-        email: "user1@mail.com",
-        image: null,
+        message: "User not found",
       })
     );
   })
@@ -51,5 +60,25 @@ describe("UserPage", () => {
     const userNode = await screen.findByText(/fakeuser1/i);
 
     expect(userNode).toBeInTheDocument();
+  });
+
+  it("renders spinner while api call", async () => {
+    setup("1");
+
+    const spinnerNode = await screen.findByRole("status");
+
+    expect(spinnerNode).toBeInTheDocument();
+
+    await screen.findByText(/fakeuser1/i);
+
+    expect(spinnerNode).not.toBeInTheDocument();
+  });
+
+  it("renders proper error message if wrong user id", async () => {
+    setup("sfsfwe");
+
+    const errorNode = await screen.findByText(/user not found/i);
+
+    expect(errorNode).toBeInTheDocument();
   });
 });
