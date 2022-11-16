@@ -48,7 +48,7 @@ export const memoryRouter = (initialPath, customRoutes = routes) =>
 
 export function ErrorBoundary() {
   let error = useRouteError();
-  console.error(error);
+  console.log(error);
 
   if (error.response?.responseText) {
     // The request was made and the server responded with a status code

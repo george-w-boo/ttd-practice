@@ -25,9 +25,9 @@ const UserList = () => {
         setPage(response.data);
       } catch (error) {
         setError(error);
-      } finally {
-        setIsLoading(false);
       }
+
+      setIsLoading(false);
     })();
   }, [page, size]);
 

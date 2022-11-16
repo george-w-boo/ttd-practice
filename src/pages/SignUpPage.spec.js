@@ -8,9 +8,7 @@ import userEvent from "@testing-library/user-event";
 // import axios from "axios";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
-import { act } from "react-dom/test-utils";
 
-import i18n from "../locale/i18n";
 import en from "../locale/en.json";
 import ua from "../locale/ua.json";
 import testIDs from "../test-ids.json";
@@ -333,8 +331,6 @@ describe("SignUpPage", () => {
 
       signUpBtnEl = screen.getByRole("button", { name: en.signUp });
     };
-
-    afterEach(() => act(() => i18n.changeLanguage("en")));
 
     it("initially renders SignUpPage in English", () => {
       setup();
