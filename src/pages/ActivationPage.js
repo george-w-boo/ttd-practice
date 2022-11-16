@@ -44,7 +44,7 @@ const ActivationPage = ({ testToken = null }) => {
       {result === "success" && (
         <Alert type="success" textContent="Account is activated" />
       )}
-      {error && <Alert type="danger" textContent={`Error: ${error.message}`} />}
+      {error && <Alert type="danger" textContent={error.message} />}
       {isLoading && (
         <div className="d-flex justify-content-center">
           <div className="spinner-border" role="status">

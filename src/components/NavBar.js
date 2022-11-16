@@ -11,7 +11,12 @@ const NavBar = () => {
     <nav className="navbar navbar-expand navbar-light bg-light shadow-sm">
       <div className="container">
         <Link className="navbar-brand" to="/" title="Home">
-          <img src={logo} width="60" alt="hoaxify logo" />
+          <img
+            src={logo}
+            width="60"
+            alt="hoaxify logo"
+            style={{ marginLeft: "-8px" }}
+          />
           Hoaxify
         </Link>
         <ul className="navbar-nav">
