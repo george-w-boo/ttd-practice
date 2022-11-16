@@ -23,3 +23,13 @@ export const getUsers = async (page, size) => {
 
   return response;
 };
+
+export const getUser = async (id) => {
+  const response = await axios.get(`/api/1.0/users/${id}`);
+
+  if (response.statusText !== "OK") {
+    throw { message: `Failed to fetch the user under id ${id}`, status: 500 };
+  }
+
+  return response;
+};

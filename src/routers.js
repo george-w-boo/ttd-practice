@@ -11,7 +11,7 @@ import ErrorPage from "./ErrorPage";
 import Root from "./pages/Root";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
-import UserPage from "./pages/UserPage";
+import UserPage, { loader } from "./pages/UserPage";
 import ActivationPage from "./pages/ActivationPage";
 import HomePage from "./pages/HomePage";
 import Alert from "./components/Alert";
@@ -26,7 +26,12 @@ const subRoutes = (
     />
     <Route path="signup" element={<SignUpPage />} />
     <Route path="login" element={<LoginPage />} />
-    <Route path="user/:userId" element={<UserPage />} />
+    <Route
+      path="user/:userId"
+      loader={loader}
+      element={<UserPage />}
+      errorElement={<ErrorBoundary />}
+    />
     <Route path="activation/:token" element={<ActivationPage />} />
   </>
 );
