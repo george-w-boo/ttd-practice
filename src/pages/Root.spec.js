@@ -30,7 +30,6 @@ const server = setupServer(
     );
   }),
   rest.get("/api/1.0/users/:id", (req, res, ctx) => {
-    console.log("req", req);
     return res(
       ctx.status(200),
       ctx.json({
@@ -125,11 +124,11 @@ describe("App", () => {
     it("checks if click on user leads to the user page", async () => {
       setup("/");
 
-      const userNode = await screen.findByTestId(/Marcel-1/i);
+      const userNode = await screen.findByTestId(/Marcel-11/i);
 
       userEvent.click(userNode);
 
-      const userPageNode = screen.queryByTestId(`${testIDs.userPage}-11`);
+      const userPageNode = await screen.findByTestId(`${testIDs.userPage}-11`);
 
       expect(userPageNode).toBeInTheDocument();
     });

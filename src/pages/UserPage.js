@@ -7,7 +7,7 @@ import Spinner from "../components/Spinner";
 import Alert from "../components/Alert";
 
 const UserPage = () => {
-  let { userId } = useParams();
+  const { userId } = useParams();
   const getUsersResponseDeffered = useLoaderData();
 
   return (
@@ -24,9 +24,8 @@ const UserPage = () => {
           resolve={getUsersResponseDeffered.getUserResponse}
           errorElement={<Alert />}
         >
-          {({ data }) => {
-            console.log("axiosResponse", data);
-            return <p>{data.username}</p>;
+          {(getUserResponse) => {
+            return <p>{getUserResponse.data.username}</p>;
           }}
         </Await>
       </React.Suspense>

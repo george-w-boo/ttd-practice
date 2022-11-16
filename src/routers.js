@@ -24,15 +24,10 @@ const subRoutes = (
       element={<HomePage />}
       errorElement={<ErrorBoundary />}
     />
-    <Route path="signup" element={<SignUpPage />} />
-    <Route path="login" element={<LoginPage />} />
-    <Route
-      path="user/:userId"
-      loader={loader}
-      element={<UserPage />}
-      errorElement={<ErrorBoundary />}
-    />
-    <Route path="activation/:token" element={<ActivationPage />} />
+    <Route path="/signup" element={<SignUpPage />} />
+    <Route path="/login" element={<LoginPage />} />
+    <Route path="/user/:userId" loader={loader} element={<UserPage />} />
+    <Route path="/activation/:token" element={<ActivationPage />} />
   </>
 );
 
