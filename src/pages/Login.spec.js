@@ -11,15 +11,15 @@ import testIDs from "../test-ids.json";
 
 import LoginPage from "./LoginPage";
 
-let requestBody;
-let counter = 0;
+let requestBody,
+  counter = 0;
 
 const server = setupServer(
-  rest.post("/api/1.0/users", async (req, res, ctx) => {
+  rest.post("/api/1.0/auth", async (req, res, ctx) => {
     requestBody = await req.json();
     counter += 1;
 
-    return res(ctx.status(200));
+    return res(ctx.status(401));
   })
 );
 
@@ -93,28 +93,33 @@ describe("LoginPage", () => {
       expect(loginBtnEl).toBeEnabled();
     });
 
-    it("checks if sign-up submit fn has proper body (Mock Server Worker solution)", async () => {
+    it("checks if login submit fn has proper body", async () => {
       setup();
 
       userEvent.click(loginBtnEl);
 
+      const spinnerEl = screen.getByRole("status", { hidden: true });
+      await waitForElementToBeRemoved(spinnerEl);
+
       expect(requestBody).toEqual({
-        username: "test-user",
         email: "test@test.com",
         password: "secret",
       });
     });
 
-    it("checks if sign-up btn is disabled while ongoing api call", async () => {
+    it("checks if login btn is disabled while ongoing api call", async () => {
       setup();
 
       userEvent.click(loginBtnEl);
       userEvent.click(loginBtnEl);
 
+      const spinnerEl = screen.getByRole("status", { hidden: true });
+      await waitForElementToBeRemoved(spinnerEl);
+
       expect(counter).toEqual(1);
     });
 
-    it("renders spinner after clicking login", async () => {
+    it("renders spinner during api call", async () => {
       setup();
 
       let spinnerEl = screen.queryByRole("status", { hidden: true });
@@ -122,12 +127,12 @@ describe("LoginPage", () => {
       expect(spinnerEl).not.toBeInTheDocument();
       userEvent.click(loginBtnEl);
 
-      spinnerEl = screen.queryByRole("status", { hidden: true });
+      spinnerEl = screen.getByRole("status", { hidden: true });
 
-      expect(spinnerEl).toBeInTheDocument();
+      await waitForElementToBeRemoved(spinnerEl);
     });
 
-    it("hides sign-up form upon successful api call", async () => {
+    it("hides login form upon successful api call", async () => {
       setup();
 
       const formEl = screen.getByTestId(testIDs.LoginPage);
@@ -150,7 +155,7 @@ describe("LoginPage", () => {
       });
     };
 
-    it("hides spinner and makes sign-up btn enabled after response received", async () => {
+    it("hides spinner and makes login btn enabled after response received", async () => {
       server.use(
         generateValidationError("username", "Username cannot be null")
       );
