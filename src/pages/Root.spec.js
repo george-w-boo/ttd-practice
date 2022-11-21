@@ -39,8 +39,15 @@ const server = setupServer(
         image: null,
       })
     );
+  }),
+  rest.post("/api/1.0/auth", async (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json({ username: "Marcel" }));
   })
 );
+
+const setup = (path) => {
+  render(<RouterProvider router={memoryRouter(path)} />);
+};
 
 beforeAll(() => server.listen());
 
@@ -52,10 +59,6 @@ afterAll(() => server.close());
 
 describe("App", () => {
   describe("App routing", () => {
-    const setup = (path) => {
-      render(<RouterProvider router={memoryRouter(path)} />);
-    };
-
     it.each`
       page                | path                   | testId
       ${"HomePage"}       | ${"/"}                 | ${testIDs.homePage}
@@ -133,4 +136,26 @@ describe("App", () => {
       expect(userPageNode).toBeInTheDocument();
     });
   });
+
+  describe("Login", () => {
+    it("redirects to homepage after successful login", async () => {
+      setup("/login");
+
+      const emailInputEl = screen.getByLabelText(/email/i);
+      const passwordInputEl = screen.getByLabelText("Password", {
+        exact: true,
+      });
+      const loginBtnEl = screen.getByRole("button", { name: /login/i });
+
+      userEvent.type(emailInputEl, "test@test.com");
+      userEvent.type(passwordInputEl, "aA1234");
+      userEvent.click(loginBtnEl);
+
+      const pageEl = await screen.findByTestId(testIDs.homePage);
+
+      expect(pageEl).toBeInTheDocument();
+    });
+  });
 });
+
+console.error = () => {};

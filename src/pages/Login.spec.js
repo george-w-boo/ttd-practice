@@ -7,9 +7,8 @@ import userEvent from "@testing-library/user-event";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
 
-import testIDs from "../test-ids.json";
-
 import LoginPage from "./LoginPage";
+import { MemoryRouter } from "react-router-dom";
 
 let requestBody,
   counter = 0;
@@ -75,7 +74,11 @@ describe("LoginPage", () => {
     let passwordInputEl;
 
     const setup = (password = "secret") => {
-      render(<LoginPage />);
+      render(
+        <MemoryRouter initialEntries={["/login"]}>
+          <LoginPage />
+        </MemoryRouter>
+      );
 
       emailInputEl = screen.getByLabelText(/email/i);
       passwordInputEl = screen.getByLabelText("Password", {
@@ -132,83 +135,38 @@ describe("LoginPage", () => {
       await waitForElementToBeRemoved(spinnerEl);
     });
 
-    it("hides login form upon successful api call", async () => {
-      setup();
-
-      const formEl = screen.getByTestId(testIDs.LoginPage);
-
-      userEvent.click(loginBtnEl);
-
-      await waitForElementToBeRemoved(formEl);
-    });
-
-    const generateValidationError = (field, message) => {
-      return rest.post("/api/1.0/users", async (req, res, ctx) => {
+    const generateValidationError = () => {
+      return rest.post("/api/1.0/auth", async (req, res, ctx) => {
         return res(
-          ctx.status(400),
-          ctx.json({
-            validationErrors: {
-              [field]: message,
-            },
-          })
+          ctx.status(401),
+          ctx.json({ message: "Incorrect credentials" })
         );
       });
     };
 
-    it("hides spinner and makes login btn enabled after response received", async () => {
-      server.use(
-        generateValidationError("username", "Username cannot be null")
-      );
-
+    it("renders auth fail message", async () => {
+      server.use(generateValidationError());
       setup();
-
       userEvent.click(loginBtnEl);
 
-      const spinnerEl = screen.queryByRole("status", { hidden: true });
-      const usernameValidationErrorEl = await screen.findByText(
-        "Username cannot be null"
-      );
+      const errorMsg = await screen.findByText(/Incorrect credentials/i);
 
-      expect(usernameValidationErrorEl).toBeInTheDocument();
-      expect(spinnerEl).not.toBeInTheDocument();
+      expect(errorMsg).toBeInTheDocument();
     });
 
-    it.each`
-      field         | message
-      ${"email"}    | ${"Email cannot be null"}
-      ${"password"} | ${"Password cannot be null"}
-    `("displays $message for $field", async ({ field, message }) => {
-      server.use(generateValidationError(field, message));
-
+    it("clears fail msg when text input is changed", async () => {
+      server.use(generateValidationError());
       setup();
-
       userEvent.click(loginBtnEl);
 
-      const validationErrorEl = await screen.findByText(message);
+      const errorMsg = await screen.findByText(/Incorrect credentials/i);
 
-      expect(validationErrorEl).toBeInTheDocument();
+      expect(errorMsg).toBeInTheDocument();
+
+      userEvent.type(emailInputEl, "t");
+
+      expect(errorMsg).not.toBeInTheDocument();
     });
-
-    it.each`
-      field         | message                      | label
-      ${"email"}    | ${"Email cannot be null"}    | ${"Email"}
-      ${"password"} | ${"Password cannot be null"} | ${"Password"}
-    `(
-      "clears $field validation error on typing",
-      async ({ field, message, label }) => {
-        server.use(generateValidationError(field, message));
-
-        setup();
-
-        userEvent.click(loginBtnEl);
-
-        const validationErrorEl = await screen.findByText(message);
-
-        userEvent.type(screen.getByLabelText(label), "updated");
-
-        expect(validationErrorEl).not.toBeInTheDocument();
-      }
-    );
   });
 
   describe("Internalization", () => {

@@ -1,30 +1,34 @@
 import { useState } from "react";
 import { withTranslation } from "react-i18next";
 
-import i18n from "../locale/i18n";
 import testIDs from "../test-ids.json";
 import { login } from "../api/apiCalls";
 
 import Input from "../components/Input";
+import Alert from "../components/Alert";
+import { useNavigate } from "react-router-dom";
+import ButtonWithProgress from "../components/ButtonWithProgress";
 
 function LoginPage({ t }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loginSuccess, setLoginUpSuccess] = useState(false);
-  const [errors, setErrors] = useState(null);
+  const [failedMsg, setFailedMsg] = useState("");
+
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     const { id, value } = event.target;
 
+    setFailedMsg("");
+
     switch (id) {
       case "email":
         setEmail(value);
-        setErrors({ ...errors, email: "" });
         break;
       case "password":
         setPassword(value);
-        setErrors({ ...errors, password: "" });
         break;
       default:
         return;
@@ -41,13 +45,15 @@ function LoginPage({ t }) {
 
     try {
       setIsLoading(true);
-      await login(body, i18n.language);
+      await login(body);
       setIsLoading(false);
 
       setLoginUpSuccess(true);
+
+      navigate("/");
     } catch (error) {
-      if (error.response.status === 400) {
-        setErrors(error.response.data.validationErrors);
+      if (error.response.status === 401) {
+        setFailedMsg(error.response.data.message);
       }
       setIsLoading(false);
     }
@@ -69,7 +75,6 @@ function LoginPage({ t }) {
               type="email"
               onChange={handleChange}
               value={email}
-              helpText={errors?.email}
             />
             <Input
               id="password"
@@ -77,8 +82,8 @@ function LoginPage({ t }) {
               type="password"
               onChange={handleChange}
               value={password}
-              helpText={errors?.password}
             />
+            {failedMsg && <Alert textContent={failedMsg} />}
             <div className="text-center">
               <button
                 className="btn btn-primary"

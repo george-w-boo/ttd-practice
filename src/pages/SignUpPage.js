@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { withTranslation } from "react-i18next";
 
-import i18n from "../locale/i18n";
 import testIDs from "../test-ids.json";
 import { signup } from "../api/apiCalls";
 
@@ -52,7 +51,7 @@ function SignUpPage({ t }) {
 
     try {
       setIsLoading(true);
-      await signup(body, i18n.language);
+      await signup(body);
       setIsLoading(false);
 
       setSignUpSuccess(true);

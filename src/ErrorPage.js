@@ -3,7 +3,6 @@ import Alert from "./components/Alert";
 
 export default function ErrorPage() {
   const error = useRouteError();
-  console.log(error);
 
   return (
     <div id="error-page" className="container">
