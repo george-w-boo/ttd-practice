@@ -6,7 +6,7 @@ import { login } from "../api/apiCalls";
 
 import Input from "../components/Input";
 import Alert from "../components/Alert";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import ButtonWithProgress from "../components/ButtonWithProgress";
 
 function LoginPage({ t }) {
@@ -17,6 +17,7 @@ function LoginPage({ t }) {
   const [failedMsg, setFailedMsg] = useState("");
 
   const navigate = useNavigate();
+  const [auth, setAuth] = useOutletContext();
 
   const handleChange = (event) => {
     const { id, value } = event.target;
@@ -45,11 +46,15 @@ function LoginPage({ t }) {
 
     try {
       setIsLoading(true);
-      await login(body);
+      const response = await login(body);
       setIsLoading(false);
 
       setLoginUpSuccess(true);
 
+      setAuth({
+        isLoggedIn: true,
+        id: response.data.id,
+      });
       navigate("/");
     } catch (error) {
       if (error.response.status === 401) {

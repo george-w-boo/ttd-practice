@@ -41,7 +41,7 @@ const server = setupServer(
     );
   }),
   rest.post("/api/1.0/auth", async (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json({ username: "Marcel" }));
+    return res(ctx.status(200), ctx.json({ id: 11, username: "Marcel" }));
   })
 );
 
@@ -138,9 +138,7 @@ describe("App", () => {
   });
 
   describe("Login", () => {
-    it("redirects to homepage after successful login", async () => {
-      setup("/login");
-
+    const setupLoggedIn = () => {
       const emailInputEl = screen.getByLabelText(/email/i);
       const passwordInputEl = screen.getByLabelText("Password", {
         exact: true,
@@ -150,10 +148,60 @@ describe("App", () => {
       userEvent.type(emailInputEl, "test@test.com");
       userEvent.type(passwordInputEl, "aA1234");
       userEvent.click(loginBtnEl);
+    };
+
+    it("redirects to homepage after successful login", async () => {
+      setup("/login");
+      setupLoggedIn();
 
       const pageEl = await screen.findByTestId(testIDs.homePage);
 
       expect(pageEl).toBeInTheDocument();
+    });
+
+    it("hides sign-up and login from header after successful login", async () => {
+      setup("/login");
+
+      const loginLinkNode = await screen.findByRole("link", { name: "Login" });
+      const signUpLinkNode = await screen.findByRole("link", {
+        name: "Sign Up",
+      });
+
+      setupLoggedIn();
+
+      await screen.findByTestId(testIDs.homePage);
+
+      expect(loginLinkNode).not.toBeInTheDocument();
+      expect(signUpLinkNode).not.toBeInTheDocument();
+    });
+
+    it("renders My profile link on nav bar after successful login", async () => {
+      setupLoggedIn();
+
+      await screen.findByTestId(testIDs.homePage);
+
+      const myProfileLinkNode = screen.queryByRole("link", {
+        name: "My Profile",
+      });
+
+      expect(myProfileLinkNode).toBeInTheDocument();
+    });
+
+    it("renders user page upon clicking My Profile", async () => {
+      setup("/login");
+      setupLoggedIn();
+
+      await screen.findByTestId(testIDs.homePage);
+
+      const myProfileBtnNode = screen.queryByRole("link", {
+        name: "My Profile",
+      });
+
+      userEvent.click(myProfileBtnNode);
+
+      const username = await screen.findByText("Marcel");
+
+      expect(username).toBeInTheDocument();
     });
   });
 });
