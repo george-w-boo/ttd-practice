@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { withTranslation } from "react-i18next";
 
-import i18n from "../locale/i18n";
 import testIDs from "../test-ids.json";
 import { signup } from "../api/apiCalls";
 
 import Input from "../components/Input";
 import Alert from "../components/Alert";
+import ButtonWithProgress from "../components/ButtonWithProgress";
 
 function SignUpPage({ t }) {
   const [username, setUsername] = useState("");
@@ -52,7 +52,7 @@ function SignUpPage({ t }) {
 
     try {
       setIsLoading(true);
-      await signup(body, i18n.language);
+      await signup(body);
       setIsLoading(false);
 
       setSignUpSuccess(true);
@@ -115,20 +115,12 @@ function SignUpPage({ t }) {
               }
             />
             <div className="text-center">
-              <button
-                className="btn btn-primary"
-                disabled={isSignUpBtnDisabled || isLoading}
+              <ButtonWithProgress
+                isDisabled={isSignUpBtnDisabled}
+                isLoading={isLoading}
                 onClick={handleSignUp}
-              >
-                {isLoading && (
-                  <span
-                    className="spinner-border spinner-border-sm"
-                    role="status"
-                    aria-hidden={true}
-                  ></span>
-                )}
-                {t("signUp")}
-              </button>
+                text={t("signUp")}
+              />
             </div>
           </div>
         </form>
