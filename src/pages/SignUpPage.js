@@ -6,6 +6,7 @@ import { signup } from "../api/apiCalls";
 
 import Input from "../components/Input";
 import Alert from "../components/Alert";
+import ButtonWithProgress from "../components/ButtonWithProgress";
 
 function SignUpPage({ t }) {
   const [username, setUsername] = useState("");
@@ -114,20 +115,12 @@ function SignUpPage({ t }) {
               }
             />
             <div className="text-center">
-              <button
-                className="btn btn-primary"
-                disabled={isSignUpBtnDisabled || isLoading}
+              <ButtonWithProgress
+                isDisabled={isSignUpBtnDisabled}
+                isLoading={isLoading}
                 onClick={handleSignUp}
-              >
-                {isLoading && (
-                  <span
-                    className="spinner-border spinner-border-sm"
-                    role="status"
-                    aria-hidden={true}
-                  ></span>
-                )}
-                {t("signUp")}
-              </button>
+                text={t("signUp")}
+              />
             </div>
           </div>
         </form>

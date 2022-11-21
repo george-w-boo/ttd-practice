@@ -85,20 +85,12 @@ function LoginPage({ t }) {
             />
             {failedMsg && <Alert textContent={failedMsg} />}
             <div className="text-center">
-              <button
-                className="btn btn-primary"
-                disabled={isLoginBtnDisabled || isLoading}
+              <ButtonWithProgress
+                isDisabled={isLoginBtnDisabled}
+                isLoading={isLoading}
                 onClick={handleLogin}
-              >
-                {isLoading && (
-                  <span
-                    className="spinner-border spinner-border-sm"
-                    role="status"
-                    aria-hidden={true}
-                  ></span>
-                )}
-                {t("login")}
-              </button>
+                text={t("login")}
+              />
             </div>
           </div>
         </form>

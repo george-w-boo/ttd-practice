@@ -33,8 +33,15 @@ afterAll(() => server.close());
 
 describe("LoginPage", () => {
   describe("Layout", () => {
+    const layoutSetup = () => {
+      render(
+        <MemoryRouter initialEntries={["/login"]}>
+          <LoginPage />
+        </MemoryRouter>
+      );
+    };
     it("renders LoginPage", () => {
-      render(<LoginPage />);
+      layoutSetup();
 
       const headerEl = screen.getByRole("heading", { name: "Login" });
 
@@ -42,7 +49,7 @@ describe("LoginPage", () => {
     });
 
     it("has input Email of type email", () => {
-      render(<LoginPage />);
+      layoutSetup();
 
       const emailInputEl = screen.getByLabelText(/email/i);
 
@@ -50,7 +57,7 @@ describe("LoginPage", () => {
     });
 
     it("has input Password of type Password", () => {
-      render(<LoginPage />);
+      layoutSetup();
 
       const passwordInputEl = screen.getByLabelText("Password", {
         exact: true,
@@ -60,7 +67,7 @@ describe("LoginPage", () => {
     });
 
     it("has login btn initially disabled", () => {
-      render(<LoginPage />);
+      layoutSetup();
 
       const loginBtnEl = screen.getByRole("button", { name: /login/i });
 
