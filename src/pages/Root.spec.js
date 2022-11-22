@@ -1,4 +1,8 @@
-import { render, screen } from "@testing-library/react";
+import {
+  render,
+  screen,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
 import { RouterProvider } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
@@ -143,16 +147,17 @@ describe("App", () => {
       const passwordInputEl = screen.getByLabelText("Password", {
         exact: true,
       });
-      const loginBtnEl = screen.getByRole("button", { name: /login/i });
 
       userEvent.type(emailInputEl, "test@test.com");
       userEvent.type(passwordInputEl, "aA1234");
-      userEvent.click(loginBtnEl);
     };
 
     it("redirects to homepage after successful login", async () => {
       setup("/login");
       setupLoggedIn();
+
+      const loginBtnEl = screen.getByRole("button", { name: /login/i });
+      userEvent.click(loginBtnEl);
 
       const pageEl = await screen.findByTestId(testIDs.homePage);
 
@@ -162,44 +167,45 @@ describe("App", () => {
     it("hides sign-up and login from header after successful login", async () => {
       setup("/login");
 
-      const loginLinkNode = await screen.findByRole("link", { name: "Login" });
-      const signUpLinkNode = await screen.findByRole("link", {
-        name: "Sign Up",
-      });
+      const loginLinkNode = await screen.findByTitle(/login/i);
+      const signUpLinkNode = await screen.findByTitle(/signup/i);
 
       setupLoggedIn();
 
+      const loginBtnEl = screen.getByRole("button", { name: /login/i });
+      userEvent.click(loginBtnEl);
+
       await screen.findByTestId(testIDs.homePage);
+
+      await waitForElementToBeRemoved(loginLinkNode);
 
       expect(loginLinkNode).not.toBeInTheDocument();
       expect(signUpLinkNode).not.toBeInTheDocument();
     });
 
-    it("renders My profile link on nav bar after successful login", async () => {
-      setupLoggedIn();
-
-      await screen.findByTestId(testIDs.homePage);
-
-      const myProfileLinkNode = screen.queryByRole("link", {
-        name: "My Profile",
-      });
-
-      expect(myProfileLinkNode).toBeInTheDocument();
-    });
-
-    it("renders user page upon clicking My Profile", async () => {
+    it("enders user page upon clicking My Profile", async () => {
       setup("/login");
+
+      const loginLinkNode = await screen.findByTitle(/login/i);
+      const signUpLinkNode = await screen.findByTitle(/signup/i);
+
       setupLoggedIn();
+
+      const loginBtnEl = screen.getByRole("button", { name: /login/i });
+      userEvent.click(loginBtnEl);
 
       await screen.findByTestId(testIDs.homePage);
 
-      const myProfileBtnNode = screen.queryByRole("link", {
-        name: "My Profile",
-      });
+      await waitForElementToBeRemoved(loginLinkNode);
 
-      userEvent.click(myProfileBtnNode);
+      expect(loginLinkNode).not.toBeInTheDocument();
+      expect(signUpLinkNode).not.toBeInTheDocument();
 
-      const username = await screen.findByText("Marcel");
+      const myProfileLinkNode = screen.queryByTitle(/my profile/i);
+
+      userEvent.click(myProfileLinkNode);
+
+      const username = await screen.findByText("user1");
 
       expect(username).toBeInTheDocument();
     });

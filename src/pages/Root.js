@@ -8,6 +8,7 @@ const Root = () => {
     isLoggedIn: false,
     id: "",
   });
+
   return (
     <>
       <NavBar auth={auth} />
