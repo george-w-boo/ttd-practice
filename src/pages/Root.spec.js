@@ -11,6 +11,7 @@ import testIDs from "../test-ids.json";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
 import { memoryRouter } from "../routers";
+import AuthContextProvider from "../state/AuthContextProvider";
 
 const server = setupServer(
   rest.post("/api/1.0/users/token/:token", async (req, res, ctx) => {
@@ -50,7 +51,11 @@ const server = setupServer(
 );
 
 const setup = (path) => {
-  render(<RouterProvider router={memoryRouter(path)} />);
+  render(
+    <AuthContextProvider>
+      <RouterProvider router={memoryRouter(path)} />
+    </AuthContextProvider>
+  );
 };
 
 beforeAll(() => server.listen());

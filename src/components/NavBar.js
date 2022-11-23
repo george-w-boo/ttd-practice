@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { t } from "i18next";
 
 import logo from "../assets/hoaxify.png";
 
 import LanguageSelector from "./LanguageSelector";
+import { AuthContext } from "../state/AuthContextProvider";
 
-const NavBar = ({ auth }) => {
+const NavBar = () => {
+  const auth = useContext(AuthContext);
+
   return (
     <nav className="navbar navbar-expand navbar-light bg-light shadow-sm">
       <div className="container">
