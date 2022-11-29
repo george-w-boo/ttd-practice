@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { withTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 import testIDs from "../test-ids.json";
 import { login } from "../api/apiCalls";
 
 import Input from "../components/Input";
 import Alert from "../components/Alert";
-import { useNavigate } from "react-router-dom";
 import ButtonWithProgress from "../components/ButtonWithProgress";
+import { AuthContext } from "../state/AuthContextProvider";
 
 function LoginPage({ t }) {
   const [email, setEmail] = useState("");
@@ -17,6 +18,7 @@ function LoginPage({ t }) {
   const [failedMsg, setFailedMsg] = useState("");
 
   const navigate = useNavigate();
+  const { setAuth } = useContext(AuthContext);
 
   const handleChange = (event) => {
     const { id, value } = event.target;
@@ -45,11 +47,15 @@ function LoginPage({ t }) {
 
     try {
       setIsLoading(true);
-      await login(body);
+      const response = await login(body);
       setIsLoading(false);
 
       setLoginUpSuccess(true);
 
+      setAuth({
+        isLoggedIn: true,
+        id: response.data.id,
+      });
       navigate("/");
     } catch (error) {
       if (error.response.status === 401) {

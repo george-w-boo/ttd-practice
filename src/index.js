@@ -6,11 +6,14 @@ import reportWebVitals from "./reportWebVitals";
 
 import "./locale/i18n";
 import { browserRouter } from "./routers";
+import AuthContextProvider from "./state/AuthContextProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={browserRouter} />
+    <AuthContextProvider>
+      <RouterProvider router={browserRouter} />
+    </AuthContextProvider>
   </React.StrictMode>
 );
 

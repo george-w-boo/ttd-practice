@@ -4,11 +4,14 @@ import {
   waitForElementToBeRemoved,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { Route, RouterProvider } from "react-router-dom";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
 
 import LoginPage from "./LoginPage";
-import { MemoryRouter } from "react-router-dom";
+import Root from "./Root";
+import ErrorPage from "../ErrorPage";
+import { memoryRouter } from "../routers";
 
 let requestBody,
   counter = 0;
@@ -35,11 +38,17 @@ describe("LoginPage", () => {
   describe("Layout", () => {
     const layoutSetup = () => {
       render(
-        <MemoryRouter initialEntries={["/login"]}>
-          <LoginPage />
-        </MemoryRouter>
+        <RouterProvider
+          router={memoryRouter(
+            "/login",
+            <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
+              <Route path="/login" element={<LoginPage />} />
+            </Route>
+          )}
+        />
       );
     };
+
     it("renders LoginPage", () => {
       layoutSetup();
 
@@ -82,9 +91,14 @@ describe("LoginPage", () => {
 
     const setup = (password = "secret") => {
       render(
-        <MemoryRouter initialEntries={["/login"]}>
-          <LoginPage />
-        </MemoryRouter>
+        <RouterProvider
+          router={memoryRouter(
+            "/login",
+            <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
+              <Route path="/login" element={<LoginPage />} />
+            </Route>
+          )}
+        />
       );
 
       emailInputEl = screen.getByLabelText(/email/i);

@@ -12,7 +12,7 @@ describe("NavBar", () => {
   `("renders link to $page", ({ _, name }) => {
     render(
       <MemoryRouter>
-        <NavBar />
+        <NavBar auth={{ isLoggedIn: false }} />
       </MemoryRouter>
     );
 
