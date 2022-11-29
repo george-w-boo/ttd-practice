@@ -1,18 +1,14 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import AuthContextProvider from "./state/AuthContextProvider";
-import { RouterProvider } from "react-router-dom";
-import { memoryRouter } from "./routers";
 import LanguageSelector from "./components/LanguageSelector";
 
 const AllTheProviders = ({ children }) => {
   return (
-    <RouterProvider router={memoryRouter}>
-      <AuthContextProvider>
-        {children}
-        <LanguageSelector />
-      </AuthContextProvider>
-    </RouterProvider>
+    <AuthContextProvider>
+      {children}
+      <LanguageSelector />
+    </AuthContextProvider>
   );
 };
 
