@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { withTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -8,7 +8,8 @@ import { login } from "../api/apiCalls";
 import Input from "../components/Input";
 import Alert from "../components/Alert";
 import ButtonWithProgress from "../components/ButtonWithProgress";
-import { AuthContext } from "../state/AuthContextProvider";
+
+import { useDispatch } from "react-redux";
 
 function LoginPage({ t }) {
   const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ function LoginPage({ t }) {
   const [failedMsg, setFailedMsg] = useState("");
 
   const navigate = useNavigate();
-  const { setAuth } = useContext(AuthContext);
+  const dispatch = useDispatch();
 
   const handleChange = (event) => {
     const { id, value } = event.target;
@@ -52,9 +53,11 @@ function LoginPage({ t }) {
 
       setLoginUpSuccess(true);
 
-      setAuth({
-        isLoggedIn: true,
-        id: response.data.id,
+      dispatch({
+        type: "LOGIN-SUCCESS",
+        payload: {
+          id: response.data.id,
+        },
       });
       navigate("/");
     } catch (error) {

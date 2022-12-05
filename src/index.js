@@ -6,14 +6,37 @@ import reportWebVitals from "./reportWebVitals";
 
 import "./locale/i18n";
 import { browserRouter } from "./routers";
-import AuthContextProvider from "./state/AuthContextProvider";
+import { Provider } from "react-redux";
+import { legacy_createStore } from "redux";
+
+const reducer = (state, action) => {
+  console.log({ state, action });
+
+  switch (action.type) {
+    case "LOGIN-SUCCESS":
+      return {
+        ...state,
+        id: action.payload.id,
+        isLoggedIn: true,
+      };
+    default:
+      return state;
+  }
+};
+
+const initialState = {
+  isLoggedIn: false,
+  id: "",
+};
+
+const store = legacy_createStore(reducer, initialState);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <AuthContextProvider>
+    <Provider store={store}>
       <RouterProvider router={browserRouter} />
-    </AuthContextProvider>
+    </Provider>
   </React.StrictMode>
 );
 
