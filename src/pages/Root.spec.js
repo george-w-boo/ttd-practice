@@ -173,8 +173,6 @@ describe("App", () => {
 
       await screen.findByTestId(testIDs.homePage);
 
-      await waitForElementToBeRemoved(loginLinkNode);
-
       expect(loginLinkNode).not.toBeInTheDocument();
       expect(signUpLinkNode).not.toBeInTheDocument();
     });
@@ -191,8 +189,6 @@ describe("App", () => {
       userEvent.click(loginBtnEl);
 
       await screen.findByTestId(testIDs.homePage);
-
-      await waitForElementToBeRemoved(loginLinkNode);
 
       expect(loginLinkNode).not.toBeInTheDocument();
       expect(signUpLinkNode).not.toBeInTheDocument();

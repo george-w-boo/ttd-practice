@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "../test-utils";
 import { MemoryRouter } from "react-router-dom";
 
 import NavBar from "./NavBar";
@@ -12,7 +12,7 @@ describe("NavBar", () => {
   `("renders link to $page", ({ _, name }) => {
     render(
       <MemoryRouter>
-        <NavBar auth={{ isLoggedIn: false }} />
+        <NavBar />
       </MemoryRouter>
     );
 
