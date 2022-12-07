@@ -1,44 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
-
-import reportWebVitals from "./reportWebVitals";
-
-import "./locale/i18n";
 import { browserRouter } from "./routers";
 import { Provider } from "react-redux";
-import { legacy_createStore } from "redux";
 
-const reducer = (state, action) => {
-  console.log({ state, action });
-
-  switch (action.type) {
-    case "LOGIN-SUCCESS":
-      return {
-        ...state,
-        id: action.payload.id,
-        isLoggedIn: true,
-      };
-    default:
-      return state;
-  }
-};
-
-const initialState = {
-  isLoggedIn: false,
-  id: "",
-};
-
-const store = legacy_createStore(
-  reducer,
-  initialState,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
+import reportWebVitals from "./reportWebVitals";
+import "./locale/i18n";
+import createAppStore from "./state/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
+    <Provider store={createAppStore()}>
       <RouterProvider router={browserRouter} />
     </Provider>
   </React.StrictMode>

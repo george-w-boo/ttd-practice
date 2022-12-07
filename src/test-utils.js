@@ -1,14 +1,16 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import AuthContextProvider from "./state/AuthContextProvider";
+import { Provider } from "react-redux";
+
 import LanguageSelector from "./components/LanguageSelector";
+import createAppStore from "./state/store";
 
 const AllTheProviders = ({ children }) => {
   return (
-    <AuthContextProvider>
+    <Provider store={createAppStore()}>
       {children}
       <LanguageSelector />
-    </AuthContextProvider>
+    </Provider>
   );
 };
 
