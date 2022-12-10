@@ -7,4 +7,9 @@ import { act } from "react-dom/test-utils";
 
 import i18n from "./locale/i18n";
 
-afterEach(() => act(() => i18n.changeLanguage("en")), localStorage.clear());
+afterEach(() =>
+  act(() => {
+    i18n.changeLanguage("en");
+    localStorage.clear();
+  })
+);

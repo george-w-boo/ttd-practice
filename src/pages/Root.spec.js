@@ -1,4 +1,4 @@
-import { render, screen, waitForElementToBeRemoved } from "../test-utils";
+import { render, screen } from "../test-utils";
 import { RouterProvider } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
