@@ -1,17 +1,13 @@
+import SecureLS from "secure-ls";
+
+const secureLS = new SecureLS();
+
 const setItem = (key, value) => {
-  localStorage.setItem(key, JSON.stringify(value));
+  secureLS.set(key, value);
 };
 
 const getItem = (key) => {
-  const storedItem = localStorage.getItem(key);
-
-  if (!storedItem) return null;
-
-  try {
-    return JSON.parse(storedItem);
-  } catch (error) {
-    return storedItem;
-  }
+  return secureLS.get(key);
 };
 
 const clear = () => {
