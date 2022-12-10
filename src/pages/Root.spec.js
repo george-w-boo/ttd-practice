@@ -8,6 +8,8 @@ import { setupServer } from "msw/node";
 import { rest } from "msw";
 import { memoryRouter } from "../routers";
 
+import storage from "../state/storage";
+
 const server = setupServer(
   rest.post("/api/1.0/users/token/:token", async (req, res, ctx) => {
     return res(ctx.status(200));
@@ -211,13 +213,13 @@ describe("App", () => {
 
       await screen.findByTestId(testIDs.homePage);
 
-      const loggedInDataInLS = JSON.parse(localStorage.getItem("auth"));
+      const loggedInDataInLS = storage.getItem("auth");
 
       expect(loggedInDataInLS.isLoggedIn).toBeTruthy();
     });
 
     it("renders logged-in state layout after page refresh", () => {
-      localStorage.setItem("auth", JSON.stringify({ isLoggedIn: true }));
+      storage.setItem("auth", { isLoggedIn: true });
       setup("/");
 
       const myProfileLinkNode = screen.queryByTitle(/my profile/i);
