@@ -55,9 +55,7 @@ function LoginPage({ t }) {
 
       dispatch({
         type: "LOGIN-SUCCESS",
-        payload: {
-          id: response.data.id,
-        },
+        payload: response.data,
       });
       navigate("/");
     } catch (error) {

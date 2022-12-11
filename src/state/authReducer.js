@@ -3,7 +3,7 @@ const authReducer = (state, action) => {
     case "LOGIN-SUCCESS":
       return {
         ...state,
-        id: action.payload.id,
+        ...action.payload,
         isLoggedIn: true,
       };
     default:

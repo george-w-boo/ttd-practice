@@ -8,6 +8,8 @@ import LoginPage from "./LoginPage";
 import Root from "./Root";
 import ErrorPage from "../ErrorPage";
 import { memoryRouter } from "../routers";
+import storage from "../state/storage";
+import { wait } from "@testing-library/user-event/dist/utils";
 
 let requestBody,
   counter = 0;
@@ -85,7 +87,7 @@ describe("LoginPage", () => {
     let emailInputEl;
     let passwordInputEl;
 
-    const setup = (password = "secret") => {
+    const setup = (email = "test@test.com", password = "secret") => {
       render(
         <RouterProvider
           router={memoryRouter(
@@ -103,7 +105,7 @@ describe("LoginPage", () => {
       });
       loginBtnEl = screen.getByRole("button", { name: /login/i });
 
-      userEvent.type(emailInputEl, "test@test.com");
+      userEvent.type(emailInputEl, email);
       userEvent.type(passwordInputEl, password);
     };
 
@@ -183,6 +185,31 @@ describe("LoginPage", () => {
       userEvent.type(emailInputEl, "t");
 
       expect(errorMsg).not.toBeInTheDocument();
+    });
+
+    it("stores id, username, and userimage in LS upon successful login", async () => {
+      server.use(
+        rest.post("/api/1.0/auth", async (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({ id: 5, username: "user5", image: null, token: "token" })
+          );
+        })
+      );
+
+      setup("user5@mail.com");
+
+      userEvent.click(loginBtnEl);
+
+      await wait(1000);
+
+      const storedState = storage.getItem("auth");
+      const authObjectKeys = Object.keys(storedState);
+
+      expect(authObjectKeys.includes("id")).toBeTruthy();
+      expect(authObjectKeys.includes("username")).toBeTruthy();
+      expect(authObjectKeys.includes("image")).toBeTruthy();
+      expect(storedState.token).toEqual("token");
     });
   });
 
