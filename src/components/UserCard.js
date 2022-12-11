@@ -1,6 +1,9 @@
+import { useSelector } from "react-redux";
 import ava from "../assets/avatar.svg";
 
 const UserCard = ({ user }) => {
+  const loggedInUserId = useSelector((state) => state.id);
+
   return (
     <div className="card text-center">
       <div className="card-header">
@@ -13,6 +16,9 @@ const UserCard = ({ user }) => {
       </div>
       <div className="card-body">
         <h3>{user.username}</h3>
+        {user.id === loggedInUserId && (
+          <button className="btn btn-outline-success">Edit</button>
+        )}
       </div>
     </div>
   );
