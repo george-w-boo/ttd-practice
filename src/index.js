@@ -1,19 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
+import { browserRouter } from "./routers";
+import { Provider } from "react-redux";
 
 import reportWebVitals from "./reportWebVitals";
-
 import "./locale/i18n";
-import { browserRouter } from "./routers";
-import AuthContextProvider from "./state/AuthContextProvider";
+import createAppStore from "./state/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <AuthContextProvider>
+    <Provider store={createAppStore()}>
       <RouterProvider router={browserRouter} />
-    </AuthContextProvider>
+    </Provider>
   </React.StrictMode>
 );
 

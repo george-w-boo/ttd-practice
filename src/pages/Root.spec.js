@@ -1,4 +1,4 @@
-import { render, screen, waitForElementToBeRemoved } from "../test-utils";
+import { render, screen } from "../test-utils";
 import { RouterProvider } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
@@ -7,6 +7,8 @@ import testIDs from "../test-ids.json";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
 import { memoryRouter } from "../routers";
+
+import storage from "../state/storage";
 
 const server = setupServer(
   rest.post("/api/1.0/users/token/:token", async (req, res, ctx) => {
@@ -173,13 +175,11 @@ describe("App", () => {
 
       await screen.findByTestId(testIDs.homePage);
 
-      await waitForElementToBeRemoved(loginLinkNode);
-
       expect(loginLinkNode).not.toBeInTheDocument();
       expect(signUpLinkNode).not.toBeInTheDocument();
     });
 
-    it("enders user page upon clicking My Profile", async () => {
+    it("renders user page upon clicking My Profile", async () => {
       setup("/login");
 
       const loginLinkNode = await screen.findByTitle(/login/i);
@@ -192,8 +192,6 @@ describe("App", () => {
 
       await screen.findByTestId(testIDs.homePage);
 
-      await waitForElementToBeRemoved(loginLinkNode);
-
       expect(loginLinkNode).not.toBeInTheDocument();
       expect(signUpLinkNode).not.toBeInTheDocument();
 
@@ -204,6 +202,29 @@ describe("App", () => {
       const username = await screen.findByText("user1");
 
       expect(username).toBeInTheDocument();
+    });
+
+    it("stores logged-in data in locale storage", async () => {
+      setup("/login");
+      setupLoggedIn();
+
+      const loginBtnEl = screen.getByRole("button", { name: /login/i });
+      userEvent.click(loginBtnEl);
+
+      await screen.findByTestId(testIDs.homePage);
+
+      const loggedInDataInLS = storage.getItem("auth");
+
+      expect(loggedInDataInLS.isLoggedIn).toBeTruthy();
+    });
+
+    it("renders logged-in state layout after page refresh", () => {
+      storage.setItem("auth", { isLoggedIn: true });
+      setup("/");
+
+      const myProfileLinkNode = screen.queryByTitle(/my profile/i);
+
+      expect(myProfileLinkNode).toBeInTheDocument();
     });
   });
 });
