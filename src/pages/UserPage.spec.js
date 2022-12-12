@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "../test-utils";
 import { RouterProvider, Route } from "react-router-dom";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
