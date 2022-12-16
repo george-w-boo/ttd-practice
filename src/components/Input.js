@@ -12,7 +12,6 @@ const Input = ({ id, label, type, onChange, value, helpText }) => {
         type={type}
         onChange={onChange}
         value={value}
-        defaultValue={value}
         aria-describedby="usernameHelp"
       />
       {helpText && <span className="invalid-feedback">{helpText}</span>}

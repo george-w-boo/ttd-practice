@@ -3,23 +3,52 @@ import { useSelector } from "react-redux";
 
 import Input from "../components/Input";
 import ava from "../assets/avatar.svg";
+import { updateUser } from "../api/apiCalls";
+import ButtonWithProgress from "./ButtonWithProgress";
 
 const UserCard = ({ user }) => {
+  const [userName, setUserName] = useState(user.username);
   const [inEditMode, setInEditMode] = useState(false);
-  const loggedInUserId = useSelector((state) => state.id);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { id, header } = useSelector((store) => ({
+    id: store.id,
+    header: store.header,
+  }));
 
   let content;
 
+  const onChangeHandler = (event) => {
+    setUserName(event.target.value);
+  };
+
+  const onSaveHandler = async (userId, userName) => {
+    try {
+      setIsLoading(true);
+      await updateUser(userId, userName, header);
+    } catch (err) {}
+
+    setIsLoading(false);
+  };
+
   if (inEditMode) {
+    console.log("userName", userName);
     content = (
       <>
         <Input
+          type="text"
           label="Change your username"
           id="username"
           placeholder
-          value={user.username}
+          value={userName}
+          onChange={onChangeHandler}
         />
-        <button className="btn btn-primary">Save</button>
+        <ButtonWithProgress
+          isDisabled={isLoading}
+          isLoading={isLoading}
+          onClick={() => onSaveHandler(user.id, userName)}
+          text="Save"
+        />
         <button className="btn btn-outline-secondary">Cancel</button>
       </>
     );
@@ -27,7 +56,7 @@ const UserCard = ({ user }) => {
     content = (
       <>
         <h3>{user.username}</h3>
-        {user.id === loggedInUserId && (
+        {user.id === id && (
           <button
             className="btn btn-outline-success"
             onClick={() => setInEditMode(true)}
