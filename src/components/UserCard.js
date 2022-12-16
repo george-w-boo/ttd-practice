@@ -26,6 +26,7 @@ const UserCard = ({ user }) => {
     try {
       setIsLoading(true);
       await updateUser(userId, userName, header);
+      setInEditMode(false);
     } catch (err) {}
 
     setIsLoading(false);
@@ -49,13 +50,18 @@ const UserCard = ({ user }) => {
           onClick={() => onSaveHandler(user.id, userName)}
           text="Save"
         />
-        <button className="btn btn-outline-secondary">Cancel</button>
+        <button
+          className="btn btn-outline-secondary"
+          onClick={() => setInEditMode(false)}
+        >
+          Cancel
+        </button>
       </>
     );
   } else {
     content = (
       <>
-        <h3>{user.username}</h3>
+        <h3>{userName}</h3>
         {user.id === id && (
           <button
             className="btn btn-outline-success"

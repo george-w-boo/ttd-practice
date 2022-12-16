@@ -144,4 +144,63 @@ describe("UserCard", () => {
 
     expect(header).toBe("auth header value");
   });
+
+  it("hides edit layout upon successful username update", async () => {
+    setup();
+
+    const editBtn = screen.getByRole("button", { name: /edit/i });
+    userEvent.click(editBtn);
+
+    const editUsernameInput = screen.queryByLabelText(/Change your username/i);
+
+    const saveBtn = screen.getByRole("button", { name: /save/i });
+    userEvent.click(saveBtn);
+
+    const spinner = await screen.findByRole("status");
+
+    await waitForElementToBeRemoved(spinner);
+
+    expect(editUsernameInput).not.toBeInTheDocument();
+  });
+
+  it("updates username in after successful edit call", async () => {
+    setup();
+
+    const editBtn = screen.getByRole("button", { name: /edit/i });
+    userEvent.click(editBtn);
+
+    const editUsernameInput = screen.queryByLabelText(/Change your username/i);
+    userEvent.clear(editUsernameInput);
+    userEvent.type(editUsernameInput, "new-user");
+
+    const saveBtn = screen.getByRole("button", { name: /save/i });
+    userEvent.click(saveBtn);
+
+    const updatedHeading = await screen.findByRole("heading", {
+      name: /new-user/i,
+    });
+
+    expect(updatedHeading).toBeInTheDocument();
+  });
+
+  it("renders last updated name in input in edit mode after successful username update", async () => {
+    setup();
+
+    let editBtn = screen.getByRole("button", { name: /edit/i });
+    userEvent.click(editBtn);
+
+    let editUsernameInput = screen.queryByLabelText(/Change your username/i);
+    userEvent.clear(editUsernameInput);
+    userEvent.type(editUsernameInput, "new-user");
+
+    const saveBtn = screen.getByRole("button", { name: /save/i });
+    userEvent.click(saveBtn);
+
+    editBtn = await screen.findByRole("button", { name: /edit/i });
+    userEvent.click(editBtn);
+
+    editUsernameInput = screen.queryByLabelText(/Change your username/i);
+
+    expect(editUsernameInput).toHaveValue("new-user");
+  });
 });
