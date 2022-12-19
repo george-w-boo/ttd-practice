@@ -26,6 +26,7 @@ const UserPage = () => {
           errorElement={<Alert />}
         >
           {(getUserResponse) => {
+            console.log("getUserResponse.data", getUserResponse.data);
             return <UserCard user={getUserResponse.data} />;
           }}
         </Await>

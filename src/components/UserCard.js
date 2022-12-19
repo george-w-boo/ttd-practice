@@ -72,7 +72,7 @@ const UserCard = ({ user }) => {
   } else {
     content = (
       <>
-        <h3>{userName}</h3>
+        <h3>{user.id === id ? username : userName}</h3>
         {user.id === id && (
           <button
             className="btn btn-outline-success"
