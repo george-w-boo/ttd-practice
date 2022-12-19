@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import Input from "../components/Input";
@@ -16,6 +16,10 @@ const UserCard = ({ user }) => {
     username: store.username,
     header: store.header,
   }));
+
+  useEffect(() => {
+    setUserName(user.username);
+  }, [user]);
 
   const dispatch = useDispatch();
 

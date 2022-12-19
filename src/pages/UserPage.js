@@ -26,7 +26,6 @@ const UserPage = () => {
           errorElement={<Alert />}
         >
           {(getUserResponse) => {
-            console.log("getUserResponse.data", getUserResponse.data);
             return <UserCard user={getUserResponse.data} />;
           }}
         </Await>
@@ -38,5 +37,6 @@ const UserPage = () => {
 export default UserPage;
 
 export function loader({ params }) {
+  console.log("params", params);
   return defer({ getUserResponse: getUser(params.userId) });
 }
