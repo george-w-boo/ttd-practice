@@ -6,6 +6,11 @@ const authReducer = (state, action) => {
         ...action.payload,
         isLoggedIn: true,
       };
+    case "USER-UPDATE-SUCCESS":
+      return {
+        ...state,
+        username: action.payload.username,
+      };
     default:
       return state;
   }

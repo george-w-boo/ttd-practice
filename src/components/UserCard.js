@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import Input from "../components/Input";
 import ava from "../assets/avatar.svg";
@@ -11,10 +11,13 @@ const UserCard = ({ user }) => {
   const [inEditMode, setInEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { id, header } = useSelector((store) => ({
+  const { id, header, username } = useSelector((store) => ({
     id: store.id,
+    username: store.username,
     header: store.header,
   }));
+
+  const dispatch = useDispatch();
 
   let content;
 
@@ -27,9 +30,20 @@ const UserCard = ({ user }) => {
       setIsLoading(true);
       await updateUser(userId, userName, header);
       setInEditMode(false);
+      dispatch({
+        type: "USER-UPDATE-SUCCESS",
+        payload: {
+          username: userName,
+        },
+      });
     } catch (err) {}
 
     setIsLoading(false);
+  };
+
+  const onCancelHandler = () => {
+    setInEditMode(false);
+    setUserName(username);
   };
 
   if (inEditMode) {
@@ -50,10 +64,7 @@ const UserCard = ({ user }) => {
           onClick={() => onSaveHandler(user.id, userName)}
           text="Save"
         />
-        <button
-          className="btn btn-outline-secondary"
-          onClick={() => setInEditMode(false)}
-        >
+        <button className="btn btn-outline-secondary" onClick={onCancelHandler}>
           Cancel
         </button>
       </>

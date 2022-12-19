@@ -203,4 +203,45 @@ describe("UserCard", () => {
 
     expect(editUsernameInput).toHaveValue("new-user");
   });
+
+  it("hides edit layout upon clicking cancel btn and displays original username", async () => {
+    setup();
+
+    const editBtn = screen.getByRole("button", { name: /edit/i });
+    userEvent.click(editBtn);
+
+    const editUsernameInput = screen.queryByLabelText(/Change your username/i);
+    userEvent.type(editUsernameInput, "adfsdf");
+
+    const cancelBtn = screen.getByRole("button", { name: /cancel/i });
+    userEvent.click(cancelBtn);
+
+    const heading = screen.getByRole("heading", { name: "test2" });
+
+    expect(heading).toBeInTheDocument();
+  });
+
+  it("renders last updated username upon clicking cancel in second edit", async () => {
+    setup();
+
+    let editBtn = screen.getByRole("button", { name: /edit/i });
+    userEvent.click(editBtn);
+
+    const editUsernameInput = screen.queryByLabelText(/Change your username/i);
+    userEvent.clear(editUsernameInput);
+    userEvent.type(editUsernameInput, "new username");
+
+    const saveBtn = screen.getByRole("button", { name: /save/i });
+    userEvent.click(saveBtn);
+
+    editBtn = await screen.findByRole("button", { name: /edit/i });
+    userEvent.click(editBtn);
+
+    const cancelBtn = screen.getByRole("button", { name: /cancel/i });
+    userEvent.click(cancelBtn);
+
+    const heading = screen.getByRole("heading", { name: "new username" });
+
+    expect(heading).toBeInTheDocument();
+  });
 });
