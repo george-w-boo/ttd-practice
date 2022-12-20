@@ -37,6 +37,5 @@ const UserPage = () => {
 export default UserPage;
 
 export function loader({ params }) {
-  console.log("params", params);
   return defer({ getUserResponse: getUser(params.userId) });
 }

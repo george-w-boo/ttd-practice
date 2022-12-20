@@ -51,7 +51,6 @@ const UserCard = ({ user }) => {
   };
 
   if (inEditMode) {
-    console.log("userName", userName);
     content = (
       <>
         <Input

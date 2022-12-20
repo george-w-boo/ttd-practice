@@ -41,7 +41,6 @@ export const getUser = async (id) => {
 };
 
 export const updateUser = async (id, username, header) => {
-  console.log("updateUser > header", header);
   const response = await axios.put(
     `/api/1.0/users/${id}`,
     {
