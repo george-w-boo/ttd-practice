@@ -77,12 +77,20 @@ const UserCard = ({ user }) => {
       <>
         <h3>{user.id === id ? username : userName}</h3>
         {user.id === id && (
-          <button
-            className="btn btn-outline-success"
-            onClick={() => setInEditMode(true)}
-          >
-            Edit
-          </button>
+          <>
+            <div className="d-flex justify-content-center">
+              <button
+                className="btn btn-outline-success"
+                onClick={() => setInEditMode(true)}
+              >
+                Edit
+              </button>
+              &nbsp;
+              <button className="btn btn-danger" onClick={() => {}}>
+                Delete My Account
+              </button>
+            </div>
+          </>
         )}
       </>
     );

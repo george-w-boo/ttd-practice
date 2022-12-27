@@ -244,4 +244,24 @@ describe("UserCard", () => {
 
     expect(heading).toBeInTheDocument();
   });
+
+  it("renders delete btn when logged-in user is shown", () => {
+    setup();
+
+    const deleteBtn = screen.getByRole("button", {
+      name: /delete my account/i,
+    });
+
+    expect(deleteBtn).toBeInTheDocument();
+  });
+
+  it("does not render delete btn when not logged-in user is shown", () => {
+    setup({ ...fakeUser, id: 1 });
+
+    const deleteBtn = screen.queryByRole("button", {
+      name: /delete my account/i,
+    });
+
+    expect(deleteBtn).not.toBeInTheDocument();
+  });
 });
