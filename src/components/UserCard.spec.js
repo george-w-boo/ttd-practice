@@ -264,4 +264,30 @@ describe("UserCard", () => {
 
     expect(deleteBtn).not.toBeInTheDocument();
   });
+
+  it("renders modal upon clicking delete btn", () => {
+    setup();
+
+    expect(screen.queryByTestId("modal")).not.toBeInTheDocument();
+
+    const deleteBtn = screen.queryByRole("button", {
+      name: /delete my account/i,
+    });
+    userEvent.click(deleteBtn);
+
+    expect(screen.getByTestId("modal")).toBeInTheDocument();
+  });
+
+  it("renders confirmation question with cancel and confirm btn upon clicking delete btn", () => {
+    setup();
+
+    const deleteBtn = screen.queryByRole("button", {
+      name: /delete my account/i,
+    });
+    userEvent.click(deleteBtn);
+
+    expect(screen.getByText("Are you sure?")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /no/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /yes/i })).toBeInTheDocument();
+  });
 });

@@ -5,11 +5,13 @@ import Input from "../components/Input";
 import ava from "../assets/avatar.svg";
 import { updateUser } from "../api/apiCalls";
 import ButtonWithProgress from "./ButtonWithProgress";
+import Modal from "./Modal";
 
 const UserCard = ({ user }) => {
   const [userName, setUserName] = useState(user.username);
   const [inEditMode, setInEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const { id, header, username } = useSelector((store) => ({
     id: store.id,
@@ -50,6 +52,10 @@ const UserCard = ({ user }) => {
     setUserName(username);
   };
 
+  const onDeleteHandler = () => {
+    setIsModalVisible(true);
+  };
+
   if (inEditMode) {
     content = (
       <>
@@ -86,7 +92,7 @@ const UserCard = ({ user }) => {
                 Edit
               </button>
               &nbsp;
-              <button className="btn btn-danger" onClick={() => {}}>
+              <button className="btn btn-danger" onClick={onDeleteHandler}>
                 Delete My Account
               </button>
             </div>
@@ -97,17 +103,22 @@ const UserCard = ({ user }) => {
   }
 
   return (
-    <div className="card text-center">
-      <div className="card-header">
-        <img
-          src={user.img || ava}
-          alt={`${user}'s avatar`}
-          width="200"
-          className="rounded-circle shadow"
-        />
+    <>
+      <div className="card text-center">
+        <div className="card-header">
+          <img
+            src={user.img || ava}
+            alt={`${user}'s avatar`}
+            width="200"
+            className="rounded-circle shadow"
+          />
+        </div>
+        <div className="card-body">{content}</div>
       </div>
-      <div className="card-body">{content}</div>
-    </div>
+      {isModalVisible && (
+        <Modal title="Are you sure?" leftBtnText="No" rightBtnText="Yes" />
+      )}
+    </>
   );
 };
 
