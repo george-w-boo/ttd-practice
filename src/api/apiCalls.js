@@ -1,8 +1,16 @@
 import axios from "axios";
 import i18n from "../locale/i18n";
+// import { store } from "../state/store";
 
 axios.interceptors.request.use((request) => {
   request.headers["Accept-Language"] = i18n.language;
+
+  // const { header } = store.getState();
+
+  // if (header) {
+  //   request.headers["Authorization"] = header;
+  // }
+
   return request;
 });
 
@@ -38,4 +46,34 @@ export const getUser = async (id) => {
   }
 
   return response;
+};
+
+export const updateUser = async (id, username, header) => {
+  const response = await axios.put(
+    `/api/1.0/users/${id}`,
+    {
+      username: username,
+    },
+    {
+      headers: {
+        Authorization: header,
+      },
+    }
+  );
+
+  return response;
+};
+
+export const deleteUser = async (id, header) => {
+  const response = await axios.delete(`/api/1.0/users/${id}`, {
+    headers: {
+      Authorization: header,
+    },
+  });
+
+  return response;
+};
+
+export const logout = () => {
+  return axios.post("api/1.0/logout");
 };

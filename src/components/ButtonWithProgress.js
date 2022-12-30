@@ -8,11 +8,7 @@ function ButtonWithProgress({ isDisabled, isLoading, onClick, text }) {
       onClick={onClick}
     >
       {isLoading && (
-        <span
-          className="spinner-border spinner-border-sm"
-          role="status"
-          aria-hidden={true}
-        ></span>
+        <span className="spinner-border spinner-border-sm" role="status"></span>
       )}
       {text}
     </button>

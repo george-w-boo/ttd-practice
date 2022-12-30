@@ -55,7 +55,10 @@ function LoginPage({ t }) {
 
       dispatch({
         type: "LOGIN-SUCCESS",
-        payload: response.data,
+        payload: {
+          ...response.data,
+          header: `Bearer ${response.data.token}`,
+        },
       });
       navigate("/");
     } catch (error) {

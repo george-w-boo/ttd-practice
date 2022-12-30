@@ -6,7 +6,7 @@ const Alert = ({
   textContent = "Something went wrong...",
 }) => {
   const error = useAsyncError();
-  if (error?.response.data.message) textContent = error.response.data.message;
+  if (error?.response?.data.message) textContent = error.response.data.message;
 
   return (
     <div className={`alert alert-${type}`}>

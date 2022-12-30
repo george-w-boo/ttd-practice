@@ -9,7 +9,6 @@ import Root from "./Root";
 import ErrorPage from "../ErrorPage";
 import { memoryRouter } from "../routers";
 import storage from "../state/storage";
-import { wait } from "@testing-library/user-event/dist/utils";
 
 let requestBody,
   counter = 0;
@@ -201,7 +200,7 @@ describe("LoginPage", () => {
 
       userEvent.click(loginBtnEl);
 
-      await wait(1000);
+      await screen.findByText(/my profile/i);
 
       const storedState = storage.getItem("auth");
       const authObjectKeys = Object.keys(storedState);

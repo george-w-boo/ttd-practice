@@ -5,10 +5,22 @@ import { t } from "i18next";
 import logo from "../assets/hoaxify.png";
 
 import LanguageSelector from "./LanguageSelector";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../api/apiCalls";
 
 const NavBar = () => {
   const auth = useSelector((store) => store);
+  const dispatch = useDispatch();
+
+  const onClickLogout = async (event) => {
+    event.preventDefault();
+
+    try {
+      await logout();
+    } catch (error) {}
+
+    dispatch({ type: "LOGOUT-SUCCESS" });
+  };
 
   return (
     <nav className="navbar navbar-expand navbar-light bg-light shadow-sm">
@@ -34,13 +46,18 @@ const NavBar = () => {
             </>
           )}
           {auth.isLoggedIn && (
-            <Link
-              className="nav-link"
-              to={`/user/${auth.id}`}
-              title="My Profile"
-            >
-              My Profile
-            </Link>
+            <>
+              <Link
+                className="nav-link"
+                to={`/user/${auth.id}`}
+                title="My Profile"
+              >
+                My Profile
+              </Link>
+              <a href="/" className="nav-link" onClick={onClickLogout}>
+                Logout
+              </a>
+            </>
           )}
           <LanguageSelector />
         </ul>

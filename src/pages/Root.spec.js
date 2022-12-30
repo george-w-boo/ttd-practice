@@ -10,6 +10,9 @@ import { memoryRouter } from "../routers";
 
 import storage from "../state/storage";
 
+let logoutCount = 0;
+let header;
+
 const server = setupServer(
   rest.post("/api/1.0/users/token/:token", async (req, res, ctx) => {
     return res(ctx.status(200));
@@ -32,6 +35,7 @@ const server = setupServer(
     );
   }),
   rest.get("/api/1.0/users/:id", (req, res, ctx) => {
+    header = req.headers.get("Authorization");
     return res(
       ctx.status(200),
       ctx.json({
@@ -44,6 +48,13 @@ const server = setupServer(
   }),
   rest.post("/api/1.0/auth", async (req, res, ctx) => {
     return res(ctx.status(200), ctx.json({ id: 11, username: "Marcel" }));
+  }),
+  rest.post("/api/1.0/logout", (req, res, ctx) => {
+    logoutCount += 1;
+    return res(ctx.status(200));
+  }),
+  rest.delete("/api/1.0/users/:id", (req, res, ctx) => {
+    return res(ctx.status(200));
   })
 );
 
@@ -54,6 +65,7 @@ const setup = (path) => {
 beforeAll(() => server.listen());
 
 beforeEach(() => {
+  logoutCount = 0;
   server.resetHandlers();
 });
 
@@ -225,6 +237,98 @@ describe("App", () => {
       const myProfileLinkNode = screen.queryByTitle(/my profile/i);
 
       expect(myProfileLinkNode).toBeInTheDocument();
+    });
+  });
+
+  describe("Logout", () => {
+    let logoutLink;
+
+    const setupLoggedIn = () => {
+      storage.setItem("auth", {
+        isLoggedIn: true,
+        id: 5,
+        username: "user5",
+        header: "auth-token",
+      });
+      setup("/");
+
+      logoutLink = screen.queryByRole("link", { name: /logout/i });
+    };
+    it("renders logout ling upon successful login", () => {
+      setupLoggedIn();
+
+      expect(logoutLink).toBeInTheDocument();
+    });
+
+    it("renders login and sign-up upon clicking logout link", async () => {
+      setupLoggedIn();
+
+      userEvent.click(logoutLink);
+
+      const loginLink = await screen.findByRole("link", { name: /login/i });
+
+      expect(loginLink).toBeInTheDocument();
+    });
+
+    it("sends logout api call after clicking logout", async () => {
+      setupLoggedIn();
+      userEvent.click(logoutLink);
+
+      await screen.findByRole("link", { name: /login/i });
+
+      expect(logoutCount).toBe(1);
+    });
+
+    it("removes authorization header from api calls upon user logout", async () => {
+      setupLoggedIn();
+      userEvent.click(logoutLink);
+
+      await screen.findByRole("link", { name: /login/i });
+
+      const user = await screen.findAllByText(/Marcel/i, { exact: true });
+
+      userEvent.click(user[0]);
+
+      await screen.findByRole("heading", { name: /user1/i });
+
+      expect(header).toBeFalsy();
+    });
+  });
+
+  describe("Delete User", () => {
+    let deleteMyAccountBtn;
+
+    const setupLoggedInUserPage = async () => {
+      storage.setItem("auth", {
+        isLoggedIn: true,
+        header: "auth-token",
+        id: 1,
+        username: "user1",
+      });
+
+      setup("/user/5");
+
+      deleteMyAccountBtn = await screen.findByRole("button", {
+        name: /delete my account/i,
+      });
+    };
+
+    it("redirects to homepage upon deleting user", async () => {
+      await setupLoggedInUserPage();
+
+      userEvent.click(deleteMyAccountBtn);
+      userEvent.click(screen.queryByRole("button", { name: /yes/i }));
+
+      await screen.findByTestId(testIDs.homePage);
+    });
+
+    it("renders login and sign-up btns upon deleting user", async () => {
+      await setupLoggedInUserPage();
+
+      userEvent.click(deleteMyAccountBtn);
+      userEvent.click(screen.queryByRole("button", { name: /yes/i }));
+
+      await screen.findByTitle(/login/i);
     });
   });
 });
