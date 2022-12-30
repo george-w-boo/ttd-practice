@@ -6,6 +6,7 @@ import ava from "../assets/avatar.svg";
 import { deleteUser, updateUser } from "../api/apiCalls";
 import ButtonWithProgress from "./ButtonWithProgress";
 import Modal from "./Modal";
+import { useNavigate } from "react-router-dom";
 
 const UserCard = ({ user }) => {
   const [userName, setUserName] = useState(user.username);
@@ -25,6 +26,7 @@ const UserCard = ({ user }) => {
   }, [user]);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   let content;
 
@@ -52,13 +54,10 @@ const UserCard = ({ user }) => {
     try {
       setDeleteUserIsLoading(true);
       await deleteUser(userId, header);
-      // setInEditMode(false);
-      // dispatch({
-      //   type: "USER-UPDATE-SUCCESS",
-      //   payload: {
-      //     username: userName,
-      //   },
-      // });
+      navigate("/");
+      dispatch({
+        type: "LOGOUT-SUCCESS",
+      });
     } catch (err) {}
 
     setDeleteUserIsLoading(false);

@@ -52,6 +52,9 @@ const server = setupServer(
   rest.post("/api/1.0/logout", (req, res, ctx) => {
     logoutCount += 1;
     return res(ctx.status(200));
+  }),
+  rest.delete("/api/1.0/users/:id", (req, res, ctx) => {
+    return res(ctx.status(200));
   })
 );
 
@@ -289,6 +292,43 @@ describe("App", () => {
       await screen.findByRole("heading", { name: /user1/i });
 
       expect(header).toBeFalsy();
+    });
+  });
+
+  describe("Delete User", () => {
+    let deleteMyAccountBtn;
+
+    const setupLoggedInUserPage = async () => {
+      storage.setItem("auth", {
+        isLoggedIn: true,
+        header: "auth-token",
+        id: 1,
+        username: "user1",
+      });
+
+      setup("/user/5");
+
+      deleteMyAccountBtn = await screen.findByRole("button", {
+        name: /delete my account/i,
+      });
+    };
+
+    it("redirects to homepage upon deleting user", async () => {
+      await setupLoggedInUserPage();
+
+      userEvent.click(deleteMyAccountBtn);
+      userEvent.click(screen.queryByRole("button", { name: /yes/i }));
+
+      await screen.findByTestId(testIDs.homePage);
+    });
+
+    it("renders login and sign-up btns upon deleting user", async () => {
+      await setupLoggedInUserPage();
+
+      userEvent.click(deleteMyAccountBtn);
+      userEvent.click(screen.queryByRole("button", { name: /yes/i }));
+
+      await screen.findByTitle(/login/i);
     });
   });
 });

@@ -6,6 +6,7 @@ import UserCard from "./UserCard";
 
 import { setupServer } from "msw/node";
 import { rest } from "msw";
+import { MemoryRouter } from "react-router-dom";
 
 let id, requestBody, header;
 
@@ -44,7 +45,11 @@ const fakeUser = {
 describe("UserCard", () => {
   const setup = (user = fakeUser) => {
     storage.setItem("auth", fakeUser);
-    render(<UserCard user={user} />);
+    render(
+      <MemoryRouter>
+        <UserCard user={user} />
+      </MemoryRouter>
+    );
   };
 
   it("renders edit btn when logged-in user is shown", () => {
