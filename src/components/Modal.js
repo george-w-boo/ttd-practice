@@ -1,4 +1,13 @@
-const Modal = ({ title, body = "", leftBtnText, rightBtnText }) => {
+import ButtonWithProgress from "./ButtonWithProgress";
+
+const Modal = ({
+  title,
+  leftBtnText = "No",
+  rightBtnText = "Yes",
+  onClicLeftBtn,
+  onClickRightBtn,
+  isLoading = false,
+}) => {
   return (
     <div
       className="bg-black bg-opacity-50 modal d-block show"
@@ -9,24 +18,23 @@ const Modal = ({ title, body = "", leftBtnText, rightBtnText }) => {
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">{title}</h5>
-            <button
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
           </div>
           <div className="modal-footer">
             <button
               type="button"
               className="btn btn-secondary"
-              data-bs-dismiss="modal"
+              onClick={onClicLeftBtn}
             >
               {leftBtnText}
             </button>
-            <button type="button" className="btn btn-primary">
-              {rightBtnText}
-            </button>
+            <ButtonWithProgress
+              type="button"
+              className="btn btn-primary"
+              onClick={onClickRightBtn}
+              isLoading={isLoading}
+              isDisabled={isLoading}
+              text={rightBtnText}
+            />
           </div>
         </div>
       </div>

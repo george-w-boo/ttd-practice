@@ -3,14 +3,15 @@ import { useSelector, useDispatch } from "react-redux";
 
 import Input from "../components/Input";
 import ava from "../assets/avatar.svg";
-import { updateUser } from "../api/apiCalls";
+import { deleteUser, updateUser } from "../api/apiCalls";
 import ButtonWithProgress from "./ButtonWithProgress";
 import Modal from "./Modal";
 
 const UserCard = ({ user }) => {
   const [userName, setUserName] = useState(user.username);
   const [inEditMode, setInEditMode] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isUpdateUserIsLoading, setUpdateUserIsLoading] = useState(false);
+  const [isDeleteUserIsLoading, setDeleteUserIsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const { id, header, username } = useSelector((store) => ({
@@ -33,7 +34,7 @@ const UserCard = ({ user }) => {
 
   const onSaveHandler = async (userId, userName) => {
     try {
-      setIsLoading(true);
+      setUpdateUserIsLoading(true);
       await updateUser(userId, userName, header);
       setInEditMode(false);
       dispatch({
@@ -44,7 +45,23 @@ const UserCard = ({ user }) => {
       });
     } catch (err) {}
 
-    setIsLoading(false);
+    setUpdateUserIsLoading(false);
+  };
+
+  const onDeleteYesHandler = async (userId) => {
+    try {
+      setDeleteUserIsLoading(true);
+      await deleteUser(userId, header);
+      // setInEditMode(false);
+      // dispatch({
+      //   type: "USER-UPDATE-SUCCESS",
+      //   payload: {
+      //     username: userName,
+      //   },
+      // });
+    } catch (err) {}
+
+    setDeleteUserIsLoading(false);
   };
 
   const onCancelHandler = () => {
@@ -54,6 +71,10 @@ const UserCard = ({ user }) => {
 
   const onDeleteHandler = () => {
     setIsModalVisible(true);
+  };
+
+  const closeModalHandler = () => {
+    setIsModalVisible(false);
   };
 
   if (inEditMode) {
@@ -68,8 +89,8 @@ const UserCard = ({ user }) => {
           onChange={onChangeHandler}
         />
         <ButtonWithProgress
-          isDisabled={isLoading}
-          isLoading={isLoading}
+          isDisabled={isUpdateUserIsLoading}
+          isLoading={isUpdateUserIsLoading}
           onClick={() => onSaveHandler(user.id, userName)}
           text="Save"
         />
@@ -116,7 +137,12 @@ const UserCard = ({ user }) => {
         <div className="card-body">{content}</div>
       </div>
       {isModalVisible && (
-        <Modal title="Are you sure?" leftBtnText="No" rightBtnText="Yes" />
+        <Modal
+          title="Are you sure?"
+          onClicLeftBtn={closeModalHandler}
+          onClickRightBtn={() => onDeleteYesHandler(id)}
+          isLoading={isDeleteUserIsLoading}
+        />
       )}
     </>
   );

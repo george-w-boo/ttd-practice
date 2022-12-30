@@ -16,6 +16,11 @@ const server = setupServer(
     header = req.headers.get("Authorization");
 
     return res(ctx.status(200));
+  }),
+  rest.delete("api/1.0/users/:id", (req, res, ctx) => {
+    id = req.params.id;
+    header = req.headers.get("Authorization");
+    return res(ctx.status(200));
   })
 );
 
@@ -289,5 +294,53 @@ describe("UserCard", () => {
     expect(screen.getByText("Are you sure?")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /no/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /yes/i })).toBeInTheDocument();
+  });
+
+  it("removes modal upon clicking No", () => {
+    setup();
+
+    const deleteBtn = screen.queryByRole("button", {
+      name: /delete my account/i,
+    });
+    userEvent.click(deleteBtn);
+
+    expect(screen.getByTestId("modal")).toBeInTheDocument();
+
+    userEvent.click(screen.queryByRole("button", { name: /no/i }));
+
+    expect(screen.queryByTestId("modal")).not.toBeInTheDocument();
+  });
+
+  it("renders spinner during delete api call", async () => {
+    setup();
+
+    const deleteBtn = screen.queryByRole("button", {
+      name: /delete my account/i,
+    });
+    userEvent.click(deleteBtn);
+
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+
+    userEvent.click(screen.queryByRole("button", { name: /yes/i }));
+
+    const spinner = screen.getByRole("status");
+
+    await waitForElementToBeRemoved(spinner);
+  });
+
+  it("sends logged-in user and auth header in delete api call", async () => {
+    setup();
+
+    const deleteBtn = screen.queryByRole("button", {
+      name: /delete my account/i,
+    });
+    userEvent.click(deleteBtn);
+    userEvent.click(screen.queryByRole("button", { name: /yes/i }));
+
+    const spinner = screen.getByRole("status");
+    await waitForElementToBeRemoved(spinner);
+
+    expect(header).toBe("auth header value");
+    expect(id).toBe("27");
   });
 });

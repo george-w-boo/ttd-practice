@@ -64,6 +64,16 @@ export const updateUser = async (id, username, header) => {
   return response;
 };
 
+export const deleteUser = async (id, header) => {
+  const response = await axios.delete(`/api/1.0/users/${id}`, {
+    headers: {
+      Authorization: header,
+    },
+  });
+
+  return response;
+};
+
 export const logout = () => {
   return axios.post("api/1.0/logout");
 };
