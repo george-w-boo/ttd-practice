@@ -11,6 +11,8 @@ import ButtonWithProgress from "../components/ButtonWithProgress";
 
 import { useDispatch } from "react-redux";
 
+import { loginSuccess as loginSuccessActionCreator } from "../state/authActions";
+
 function LoginPage({ t }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,13 +55,12 @@ function LoginPage({ t }) {
 
       setLoginUpSuccess(true);
 
-      dispatch({
-        type: "LOGIN-SUCCESS",
-        payload: {
+      dispatch(
+        loginSuccessActionCreator({
           ...response.data,
           header: `Bearer ${response.data.token}`,
-        },
-      });
+        })
+      );
       navigate("/");
     } catch (error) {
       if (error.response.status === 401) {

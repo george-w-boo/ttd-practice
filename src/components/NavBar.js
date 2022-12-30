@@ -7,6 +7,7 @@ import logo from "../assets/hoaxify.png";
 import LanguageSelector from "./LanguageSelector";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../api/apiCalls";
+import { logoutSuccess } from "../state/authActions";
 
 const NavBar = () => {
   const auth = useSelector((store) => store);
@@ -19,7 +20,7 @@ const NavBar = () => {
       await logout();
     } catch (error) {}
 
-    dispatch({ type: "LOGOUT-SUCCESS" });
+    dispatch(logoutSuccess());
   };
 
   return (

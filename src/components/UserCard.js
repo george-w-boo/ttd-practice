@@ -7,6 +7,7 @@ import { deleteUser, updateUser } from "../api/apiCalls";
 import ButtonWithProgress from "./ButtonWithProgress";
 import Modal from "./Modal";
 import { useNavigate } from "react-router-dom";
+import { logoutSuccess, userUpdateSuccess } from "../state/authActions";
 
 const UserCard = ({ user }) => {
   const [userName, setUserName] = useState(user.username);
@@ -39,12 +40,11 @@ const UserCard = ({ user }) => {
       setUpdateUserIsLoading(true);
       await updateUser(userId, userName, header);
       setInEditMode(false);
-      dispatch({
-        type: "USER-UPDATE-SUCCESS",
-        payload: {
+      dispatch(
+        userUpdateSuccess({
           username: userName,
-        },
-      });
+        })
+      );
     } catch (err) {}
 
     setUpdateUserIsLoading(false);
@@ -55,9 +55,7 @@ const UserCard = ({ user }) => {
       setDeleteUserIsLoading(true);
       await deleteUser(userId, header);
       navigate("/");
-      dispatch({
-        type: "LOGOUT-SUCCESS",
-      });
+      dispatch(logoutSuccess());
     } catch (err) {}
 
     setDeleteUserIsLoading(false);
